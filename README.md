@@ -16,19 +16,23 @@ once its loaded theres no need to await it anymore
 
 load in the background
 ```
-ext.defer.libs.js.string.hs
+ext.defer.libs['js/string/hs'];
 
 or
 
-await ext.defer.libs.js.string.hs
+var hs    =  await ext.defer.libs['js/string/hs'];
 ```
 
 <br>
 
 ```
-await Promise.all(ext.defer.libs('js/string/hs','js/string/wildcard'));
+await ext.defer.libs('js/string/hs','js/string/wildcard');
+
+var [hs,wildcard]    =  await ext.defer.libs('js/string/hs','js/string/wildcard');
+
 
 //off we go
+
 ```
 
 
