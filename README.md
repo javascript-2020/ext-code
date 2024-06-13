@@ -10,7 +10,7 @@ then you are able to do
 console.log(await ext.libs.js.string.hs(1000));    //  1 kB
 ```
 
-once its loaded theres no need to await it anymore
+once a function is loaded theres no need to await it anymore
 
 <br>
 
