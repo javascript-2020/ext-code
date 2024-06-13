@@ -63,7 +63,9 @@ function loader(attach,name='ext'){
             async function get(target,prop){
                                                                                 //console.log('defer.proxy',prop);
                   var lname   = prop.replaceAll('/','.');
-                  if(list[lname])return;
+                  if(list[lname]){
+                        return list[lname];
+                  }
                   var fn        = await load(lname);
                   list[lname]   = fn;
                   return fn;
