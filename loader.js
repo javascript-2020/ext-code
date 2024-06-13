@@ -72,7 +72,7 @@ function loader(attach,name='ext'){
             
             function apply(target,thisArg,args){
             
-                  return args.map(arg=>get(target,arg));
+                  return Promise.all(args.map(arg=>get(target,arg)));
                   
             }//apply
             
