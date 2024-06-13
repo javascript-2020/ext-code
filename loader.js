@@ -25,6 +25,9 @@ function loader(attach,name='ext'){
             attach[name]    = ext;
       }else{
             if(attach!==null){
+                  if(globalThis[name]){
+                        return globalThis[name];
+                  }
                   globalThis[name]    = ext;
             }
       }
