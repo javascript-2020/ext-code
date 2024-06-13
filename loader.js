@@ -6,26 +6,29 @@
 
       var ext           = {};
       globalThis.ext    = ext;
+
+      ext.defer         = {};
+
+      create('fn','javascript-2020','ext-code','main');
+      create('libs','javascript-2020','libs','main');
+
       
-      remote_functions();
-      remote_snippets();
+      //remote_snippets();
       
       
-      function remote_functions(){
-                                                                              console.log('remote_functions');
-            var owner     = 'javascript-2020';
-            var repo      = 'ext-code';
-            var branch    = 'main';
-            
+      function create(type,owner,repo,branch){
+                                                                                console.log('create',type);
             var list      = {};
+
             
+            ext.defer[type]=new Proxy(()=>{},{get,apply});
             
-            ext.defer=new Proxy(()=>{},{get,apply});
-            
-            function get(target,prop){
-                                                                              //console.log('defer.proxy',prop);
-                  if(list[prop])return;
-                  return load('fn',prop);
+            async function get(target,prop){
+                                                                                //console.log('defer.proxy',prop);
+                  var lname   = prop.replaceAll('/','.');
+                  if(list[lname])return;
+                  var fn        = await load(lname);
+                  list[lname]   = fn;
                   
             }//get
             
@@ -36,54 +39,102 @@
             }//apply
             
             
-            ext.fn = new Proxy({},{get:(target,prop)=>{
+            ext[type] = modproxy(list,notfound);
+
+            async function notfound(lname,args){
             
-                  if(list[prop]){
-                        return list[prop];
-                  }
+                  var fn        = await load(lname);
+                  var result    = fn.apply(null,args);
+                  return result;
                   
-                  return async(...args)=>{
-                                                                              //console.log('ext.fn',prop,datatype(list[prop]));
-                        var promise=new Promise(async resolve=>{
-                        
-                              var fn          = await load('fn',prop);
-                              if(typeof fn!='function'){
-                                    resolve(fn);
-                                    return;
-                              }
-                              var result      = await fn(...args);
-                              resolve(result);
-                              
-                        });
-                        return promise;
-                        
-                  };
-                  
-            }});
+            }//notfound
+
             
-            async function load(type,file){
-                                                                                      //console.log('load',file);
-                  var url   = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${type}/${file}`;
-                  var res   = await fetch(url);
+            async function load(lname){
+                                                                                console.log('load',lname);
+                  var file    = lname.replaceAll('.','/');
+                  var url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
+                  var res     = await fetch(url);
                   if(!res.ok){
                         console.log('failed to load remote-function: '+file);
                         return '[ not found '+file+' ]';
                   }
                   
                   var fnstr       = await res.text();
-                                                                                      //console.log(fnstr);
+                                                                                //console.log(fnstr);
                   var fn          = eval('var fn='+fnstr+';fn');
-                                                                                      //console.log(fn);
-                  list[file]      = fn;
+                                                                                //console.log(fn);
+                  list[lname]     = fn;
                   return fn;
                   
             }//load
             
-      }//remote_functions
+      }//fn
       
       
       function remote_snippets(){
       }//remove_snippets
       
       
+      function modproxy(mem,notfound){
+      
+            return newproxy();
+            
+            
+            function getter(target,name,receiver,lname){
+            
+                  lname  += '.'+name;
+                  return newproxy(()=>{},lname);
+                  
+            }//getter
+            
+            
+            function setter(target,name,newval,lname){
+            
+                  lname  += '.'+name;
+                  lname   = lname.slice(1);
+                                                                                console.log(`wt : ${lname} - ${newval}`);
+                  mem[lname]    = newval;
+                  
+            }//setter
+            
+            
+            function applyer(target,thisArg,args,lname){
+            
+                  lname   = lname.slice(1);
+                  
+                  if(lname in mem){
+                        var v   = mem[lname];
+                        if(typeof v==='function'){
+                                                                                console.log(`fn : ${lname} - [${args}]`);
+                              return v.apply(thisArg,args);
+                        }
+                        return v;
+                  }
+                  
+                  return notfound(lname,args);
+                                                                                console.log(`fn (not found): ${lname} - [${args}]`);
+            }//applyer
+            
+            
+            function newproxy(target,lname){
+            
+                  target    = target||(()=>{});
+                  lname     = lname||'';
+                  
+                  var proxy   = new Proxy(target,{
+                                      get:(target,name,receiver)=>getter(target,name,receiver,lname),
+                                      set:(target,name,newval)=>setter(target,name,newval,lname),
+                                      apply:(target,thisArg,args)=>applyer(target,thisArg,args,lname)
+                                });
+                                
+                  return proxy;
+                  
+            }//newproxy
+            
+      }//modproxy
+      
 })();
+
+
+
