@@ -1,13 +1,13 @@
 /*
 
-    fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval))();
+    (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))();
     
-    var loader    = fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval));
+    var loader    = await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval));
     loader();
     loader(window);
     loader(window,'test');
     
-*/    
+*/
 
 
 (()=>{
@@ -25,23 +25,23 @@ function loader(attach,name='ext'){
                   globalThis[name]    = ext;
             }
       }
-
+      
       
       ext.defer         = {};
-
+      
       create('fn','javascript-2020','ext-code','main');
       create('libs','javascript-2020','libs','main');
-
+      
       
       //remote_snippets();
-
+      
       return ext;
       
       
       function create(type,owner,repo,branch){
                                                                                 console.log('create',type);
             var list      = {};
-
+            
             
             ext.defer[type]=new Proxy(()=>{},{get,apply});
             
@@ -63,7 +63,7 @@ function loader(attach,name='ext'){
             
             
             ext[type] = modproxy(list,notfound);
-
+            
             async function notfound(lname,args){
             
                   var fn        = await load(lname);
@@ -71,7 +71,7 @@ function loader(attach,name='ext'){
                   return result;
                   
             }//notfound
-
+            
             
             async function load(lname){
                                                                                 console.log('load',lname);
@@ -156,7 +156,7 @@ function loader(attach,name='ext'){
             }//newproxy
             
       }//modproxy
-     
+      
 }//loader
 
 
