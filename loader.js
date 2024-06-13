@@ -5,7 +5,6 @@
 
 
       var ext           = {};
-      globalThis.ext    = ext;
 
       ext.defer         = {};
 
