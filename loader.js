@@ -42,7 +42,7 @@ function loader(attach,name='ext'){
       
       
       function create(type,owner,repo,branch){
-                                                                                console.log('create',type);
+                                                                                //console.log('create',type);
             var list      = {};
             
             
@@ -77,7 +77,7 @@ function loader(attach,name='ext'){
             
             
             async function load(lname){
-                                                                                console.log('load',lname);
+                                                                                //console.log('load',lname);
                   var file    = lname.replaceAll('.','/');
                   var url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
                   var res     = await fetch(url);
@@ -119,7 +119,7 @@ function loader(attach,name='ext'){
             
                   lname  += '.'+name;
                   lname   = lname.slice(1);
-                                                                                console.log(`wt : ${lname} - ${newval}`);
+                                                                                //console.log(`wt : ${lname} - ${newval}`);
                   mem[lname]    = newval;
                   
             }//setter
@@ -132,14 +132,14 @@ function loader(attach,name='ext'){
                   if(lname in mem){
                         var v   = mem[lname];
                         if(typeof v==='function'){
-                                                                                console.log(`fn : ${lname} - [${args}]`);
+                                                                                //console.log(`fn : ${lname} - [${args}]`);
                               return v.apply(thisArg,args);
                         }
                         return v;
                   }
-                  
+                                                                                //console.log(`fn (not found): ${lname} - [${args}]`);
                   return notfound(lname,args);
-                                                                                console.log(`fn (not found): ${lname} - [${args}]`);
+                  
             }//applyer
             
             
