@@ -37,6 +37,27 @@ var [hs,wildcard]    =  await ext.defer.libs('js/string/hs','js/string/wildcard'
 
 
 
+other run types
+
+```
+    - (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))();
+    
+    - (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(window,'ext');
+    
+    - var ext   = (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(null);
+    
+    - ( (typeof ext=='undefined') &&
+        (ext=(await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(null))
+      );
+      
+    - var loader    = await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval));
+        - loader();
+        - loader(window);
+        - loader(window,'test');
+
+```
+
+
 
 
 
