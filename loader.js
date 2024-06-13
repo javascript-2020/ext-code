@@ -12,7 +12,7 @@
       
       
       function remote_functions(){
-                                                                              console.log('remove_functions');
+                                                                              console.log('remote_functions');
             var owner     = 'javascript-2020';
             var repo      = 'ext-code';
             var branch    = 'main';
@@ -61,30 +61,29 @@
                   
             }});
             
+            async function load(type,file){
+                                                                                      //console.log('load',file);
+                  var url   = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${type}/${file}`;
+                  var res   = await fetch(url);
+                  if(!res.ok){
+                        console.log('failed to load remote-function: '+file);
+                        return '[ not found '+file+' ]';
+                  }
+                  
+                  var fnstr       = await res.text();
+                                                                                      //console.log(fnstr);
+                  var fn          = eval('var fn='+fnstr+';fn');
+                                                                                      //console.log(fn);
+                  list[file]      = fn;
+                  return fn;
+                  
+            }//load
+            
       }//remote_functions
       
       
       function remote_snippets(){
       }//remove_snippets
-      
-      
-      async function load(type,file){
-                                                                                //console.log('load',file);
-            var url   = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${type}/${file}`;
-            var res   = await fetch(url);
-            if(!res.ok){
-                  console.log('failed to load remote-function: '+file);
-                  return '[ not found '+file+' ]';
-            }
-            
-            var fnstr       = await res.text();
-                                                                                //console.log(fnstr);
-            var fn          = eval('var fn='+fnstr+';fn');
-                                                                                //console.log(fn);
-            list[file]      = fn;
-            return fn;
-            
-      }//load
       
       
 })();
