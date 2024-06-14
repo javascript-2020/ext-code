@@ -44,11 +44,13 @@ var url      =    `${owner}:${repo}:${branch}:${path}`;
 var rando    =    'nastyox:Rando.js:2.0.0-cryptographically-secure-version:code/plain-javascript/2.0.0/rando.js';
 var n        = await ext.github[rando]();
 console.log(n);
+```
 
+```
 var rando    =    'nastyox:Rando.js:2.0.0-cryptographically-secure-version:code/plain-javascript/2.0.0/rando.js';
 await ext.defer.github[rando]();
 
-var n=ext.github[rando];
+var n=ext.github[rando]();
 console.log(n);
 
 
