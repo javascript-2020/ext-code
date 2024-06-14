@@ -37,6 +37,9 @@ function loader(attach,name='ext',override){
       
       
       if(attach){
+            if(is(attach[name])){
+                  return attach[name];
+            }
             attach[name]    = ext;
       }else{
             if(attach!==null){
