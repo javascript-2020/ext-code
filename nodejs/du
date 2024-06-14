@@ -1,0 +1,36 @@
+
+
+
+
+        async function du(dir,pat,disp){
+
+              var [wildcard,hs]   = await ext.defer.libs('js/string/wildcard','js/string/hs');
+              
+              if(!pat){
+                    pat   = dir;
+                    dir   = null;
+              }
+              dir   = dir||'.';
+
+              var fs      = require('node:fs');
+              var files   = fs.readdirSync(dir);
+              var size    = 0;
+              files.forEach(file=>{
+              
+                    if(wildcard(file,pat)){
+                          var stat    = fs.statSync(dir+file);
+                          size       += stat.size;
+                          if(disp!==false){
+                                console.log(file,hs(size));
+                          }
+                    }
+                    
+              });
+              console.log(hs(size));
+                      
+        }//du
+
+
+
+
+
