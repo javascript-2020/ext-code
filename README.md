@@ -41,12 +41,13 @@ var [hs,wildcard]    =  await ext.defer.libs('js/string/hs','js/string/wildcard'
 
 ```
 
-### remote
+### github
 
 ```
+var url      =    `${owner}:${repo}:${branch}:${path}`;
 
-var rando='nastyox:Rando.js:2.0.0-cryptographically-secure-version:code/plain-javascript/2.0.0/rando.js';
-var n   = await ext.remote[rando]();
+var rando    =    'nastyox:Rando.js:2.0.0-cryptographically-secure-version:code/plain-javascript/2.0.0/rando.js';
+var n        = await ext.remote[rando]();
 console.log(n);
 
 ```
