@@ -155,5 +155,27 @@ libraries can be formed
     }
 ```
 
+however currently libraries will need to be loaded like this
+
+```
+//  /work/tmp/test.js
+
+        test;
+        test.fn=()=>alert('test.fn');
+        function test(){
+
+              alert([...arguments].join(' '));
+
+        }
+```
+
+and then loaded like
+
+```
+var test='/work/tmp/test.js';
+var test=ext.defer.local[test];
+test();
+test.fn();
+```
 
 
