@@ -1,20 +1,24 @@
-run 
+### run 
 
 ```
+
 var ext    =  (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(null);
+
 ```
 
 then you are able to do
 
 ```
+
 console.log(await ext.libs.js.string.hs(1000));    //  1 kB
+
 ```
 
 once a function is loaded theres no need to await it anymore
 
 <br>
 
-load in the background
+### load in the background
 ```
 ext.defer.libs['js/string/hs'];
 
@@ -24,6 +28,8 @@ var hs    =  await ext.defer.libs['js/string/hs'];
 ```
 
 <br>
+
+### defer
 
 ```
 await ext.defer.libs('js/string/hs','js/string/wildcard');
@@ -35,9 +41,27 @@ var [hs,wildcard]    =  await ext.defer.libs('js/string/hs','js/string/wildcard'
 
 ```
 
+### remote
+
+```
+
+var rando='nastyox:Rando.js:2.0.0-cryptographically-secure-version:code/plain-javascript/2.0.0/rando.js';
+var n   = await ext.remote[rando]();
+console.log(n);
+
+```
+
+### local
+
+```
+
+var result        =    ext.local['/work/tmp/test.js'](1,2,3);
+
+```
 
 
-other run types
+
+### other run types
 
 ```
     - (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))();
