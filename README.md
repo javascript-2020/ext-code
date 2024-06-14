@@ -178,4 +178,25 @@ test();
 test.fn();
 ```
 
+configuration can be loaded
+
+```
+{
+    hello:'world'
+}
+```
+
+but again for time being it will need to be loaded
+
+```
+var config=ext.defer.local['/work/tmp/config.js'];
+alert(config.hello);
+```
+
+
+
+
+
+
+
 
