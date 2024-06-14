@@ -1,3 +1,8 @@
+
+
+## ext-code
+
+
 ### run 
 
 ```
@@ -86,7 +91,7 @@ var result        =    ext.local['/work/tmp/test.js'](1,2,3);
 
 
 
-### other run types
+### other ways to run
 
 ```
     - (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))();
