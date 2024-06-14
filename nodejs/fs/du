@@ -21,7 +21,7 @@
                           var stat    = fs.statSync(dir+file);
                           size       += stat.size;
                           if(disp!==false){
-                                console.log(file,hs(size));
+                                console.log(file,hs(stat.size));
                           }
                     }
                     
