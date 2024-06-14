@@ -49,8 +49,12 @@ function loader(attach,name='ext'){
       create('fn','javascript-2020','ext-code','main');
       create('libs','javascript-2020','libs','main');
       
+      //snippets();
       
-      //remote_snippets();
+      local();
+      
+      github();
+      
       
       return ext;
       
@@ -69,7 +73,6 @@ function loader(attach,name='ext'){
                         return list[lname];
                   }
                   var fn        = await load(lname);
-                  list[lname]   = fn;
                   return fn;
                   
             }//get
@@ -86,6 +89,9 @@ function loader(attach,name='ext'){
             async function notfound(lname,args){
             
                   var fn        = await load(lname);
+                  if(typeof fn!='function'){
+                        return fn;
+                  }
                   var result    = fn.apply(null,args);
                   return result;
                   
@@ -103,19 +109,146 @@ function loader(attach,name='ext'){
                   }
                   
                   var fnstr       = await res.text();
-                                                                                //console.log(fnstr);
-                  var fn          = eval('var fn='+fnstr+';fn');
-                                                                                //console.log(fn);
+                  var fn          = define(fnstr);
                   list[lname]     = fn;
                   return fn;
                   
             }//load
             
-      }//fn
+      }//create
       
       
-      function remote_snippets(){
-      }//remove_snippets
+      function snippets(){
+      }//snippets
+      
+      
+      function github(){
+      
+            var list    = {};
+            
+            ext.defer.github=new Proxy(()=>{},{get,apply});
+            
+            async function get(target,prop){
+                                                                                //console.log('defer.proxy',prop);
+                  if(list[lname]){
+                        return list[lname];
+                  }
+                  var fn        = await load(lname);
+                  return fn;
+                  
+            }//get
+            
+            function apply(target,thisArg,args){
+            
+                  return Promise.all(args.map(arg=>get(target,arg)));
+                  
+            }//apply
+            
+            
+            ext.github    = modproxy(list,notfound);
+            
+            async function notfound(lname,args){
+            
+                  var parts     = lname.split(':');
+                  var owner     = parts[0];
+                  var repo      = parts[1];
+                  var branch    = parts.length==4 ? parts[2] : 'main';
+                  var file      = parts.at(-1);
+                  
+                  var fn        = await load(owner,repo,branch,file);
+                  if(typeof fn!='function'){
+                        return fn;
+                  }
+                  var result    = fn.apply(null,args);
+                  return result;
+                  
+          }//notfound
+          
+          async function load(owner,repo,branch,file){
+          
+                  var url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
+                  var res     = await fetch(url);
+                  if(!res.ok){
+                        console.log('failed to load remote-function: '+file);
+                        return '[ not found '+file+' ]';
+                  }
+                  
+                  var fnstr       = await res.text();
+                  var fn          = define(fnstr);
+                  
+                  var lname       = `${owner}:${repo}:${branch}:${file}`;
+                  list[lname]     = fn;
+                  return fn;
+                  
+            }//notfound
+            
+      }//remote
+      
+      
+      function local(){
+      
+            var list    = {};
+            
+            ext.defer.local=new Proxy(()=>{},{get,apply});
+            
+            function get(target,prop){
+                                                                                //console.log('defer.proxy',prop);
+                  if(list[prop]){
+                        return list[prop];
+                  }
+                  var fn    = load(prop);
+                  return fn;
+                  
+            }//get
+            
+            function apply(target,thisArg,args){
+            
+                  return args.map(arg=>get(target,arg));
+                  
+            }//apply
+            
+            
+            ext.local    = modproxy(list,notfound);
+            
+            function notfound(prop,args,thisarg=null){
+            
+                  var fn        = load(prop);
+                  if(typeof fn!='function'){
+                        return fn;
+                  }
+                  var result    = fn.apply(thisarg,args);
+                  return result;
+                  
+          }//notfound
+          
+          function load(file){
+                                                                                console.log('local.load',file);
+                  var fnstr     = fs.readFileSync(file,'utf8');
+                  var fn        = define(fnstr);
+                  list[file]   = fn;
+                  return fn;
+                  
+            }//load
+            
+      }//local
+      
+      
+      function define(fnstr){
+                                                                                //console.log(fnstr);
+            var code    = `
+                  (()=>{
+                  
+                        var fn    = ${fnstr};
+                        return fn;
+                        
+                  })();
+            `;
+            
+            var fn    = eval(code);
+                                                                                //console.log(fn);
+            return fn;
+            
+      }//define
       
       
       function modproxy(mem,notfound){
