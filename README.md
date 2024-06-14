@@ -16,6 +16,19 @@ console.log(await ext.libs.js.string.hs(1000));    //  1 kB
 
 once a function is loaded theres no need to await it anymore
 
+<br>
+
+https://github.com/javascript-2020/libs/tree/main
+
+https://github.com/javascript-2020/ext-code/tree/main/fn
+
+
+
+<br>
+<br>
+<br>
+
+
 ### load in the background
 
 ```
