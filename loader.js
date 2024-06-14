@@ -28,16 +28,25 @@
                                                                                 console.log();
       return loader;
       
-function loader(attach,name='ext'){
+function loader(attach,name='ext',override){
 
-      var ext           = {};
+      var mod                   = 'ext-code';
+      
+      var ext                   = {};
+      ext[Symbol.toStringTag]   = mod;
+      
       
       if(attach){
             attach[name]    = ext;
       }else{
             if(attach!==null){
                   if(globalThis[name]){
-                        return globalThis[name];
+                        if(is(globalThis[name])){
+                              return globalThis[name];
+                        }
+                        if(!override){
+                              throw `unable to create globalThis.${name}`;
+                        }
                   }
                   globalThis[name]    = ext;
             }
@@ -58,6 +67,15 @@ function loader(attach,name='ext'){
       
       return ext;
       
+      
+      function is(v){
+      
+            var str       = Object.prototype.toString.call(v);
+            str           = str.slice(8,-1);
+            var result    = (str==mod);
+            return result;
+            
+      }//is
       
       function create(type,owner,repo,branch){
                                                                                 //console.log('create',type);
