@@ -48,7 +48,7 @@ console.log(n);
 
 ```
 var rando    =    'nastyox:Rando.js:2.0.0-cryptographically-secure-version:code/plain-javascript/2.0.0/rando.js';
-await ext.defer.github[rando]();
+await ext.defer.github[rando];
 
 var n=ext.github[rando]();
 console.log(n);
