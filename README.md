@@ -111,6 +111,15 @@ var result        =    ext.local['/work/tmp/test.js'](1,2,3);
         - loader(window);
         - loader(window,'test');
 
+
+//  node.js
+
+        var ext   = (await new Promise(resolve=>{
+              var loader    = 'https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js',body='';
+              require('https').get(loader,async res=>{for await(data of res)body+=data;resolve(eval(body))}).end();
+        }))();
+
+
 ```
 
 
