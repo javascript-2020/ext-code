@@ -60,7 +60,7 @@ function loader(attach,name='ext',override){
                                                                                 console.log();
       ext.defer         = {};
       
-      create('fn','javascript-2020','ext-code','main');
+      create('code','javascript-2020','ext-code','main');
       create('libs','javascript-2020','libs','main');
       
       //snippets();
