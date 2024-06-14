@@ -108,5 +108,42 @@ var result        =    ext.local['/work/tmp/test.js'](1,2,3);
 
 
 
+### define
+
+loaded text is defined as follows
+
+```
+      function define(fnstr){
+                                                                                //console.log(fnstr);
+            var code    = `
+                  (()=>{
+                  
+                        var fn    = ${fnstr};
+                        return fn;
+                        
+                  })();
+            `;
+            
+            var fn    = eval(code);
+                                                                                //console.log(fn);
+            return fn;
+            
+      }//define
+```
+
+so the following are permissible syntaxes
+
+```
+function(){
+    alert(1);
+}
+```
+
+```
+function mod(a,b,c){
+    alert(a+' '+b+' '+c);
+}
+```
+
 
 
