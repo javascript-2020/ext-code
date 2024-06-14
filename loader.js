@@ -24,8 +24,7 @@
 
 
 (()=>{
-                                                                                console.log('ext-code.loader-v1.0');
-                                                                                console.log();
+
       return loader;
       
 function loader(attach,name='ext',override){
@@ -57,8 +56,8 @@ function loader(attach,name='ext',override){
                   globalThis[name]    = ext;
             }
       }
-      
-      
+                                                                                console.log('ext-code.loader-v1.0');
+                                                                                console.log();
       ext.defer         = {};
       
       create('fn','javascript-2020','ext-code','main');
