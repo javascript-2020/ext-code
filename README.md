@@ -29,7 +29,7 @@ https://github.com/javascript-2020/ext-code/tree/main/fn
 <br>
 
 
-### load in the background
+### defer
 
 ```
 ext.defer.libs['js/string/hs'];
@@ -38,6 +38,11 @@ or
 
 var hs    =  await ext.defer.libs['js/string/hs'];
 ```
+
+
+<br>
+
+### defer multiple
 
 ```
 await ext.defer.libs('js/string/hs','js/string/wildcard');
