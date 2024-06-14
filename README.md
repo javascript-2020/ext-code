@@ -76,6 +76,8 @@ console.log(n);
 
 ### local
 
+local files are loaded syncronously
+
 ```
 
 var result        =    ext.local['/work/tmp/test.js'](1,2,3);
