@@ -3,6 +3,11 @@
 /*
 aab
 
+
+        var url   = `https://api.github.com/repos/javascript-2020/ext-code/contents/loader.js`,opts={headers:{accept:'application/vnd.github.raw+json'}};
+        fetch(url,opts).then(res=>res.text().then(eval))();
+        
+        
         (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))();
         
         (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(window,'ext');
@@ -19,9 +24,8 @@ aab
         loader(window,'test');
         
         
-  nodejs
-  ------
-  
+        
+        
         var ext   = (await new Promise(resolve=>{
               var loader    = 'https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js',body='';
               require('https').get(loader,async res=>{for await(data of res)body+=data;resolve(eval(body))}).end();
