@@ -17,7 +17,7 @@ then you are able to do
 
 ```
 
-console.log(await ext.libs.js.string.hs(1000));    //  1 kB
+console.log(await ext.libs.string.hs(1000));    //  1 kB
 
 ```
 
@@ -39,11 +39,11 @@ https://github.com/javascript-2020/ext-code/tree/main/fn
 ### load
 
 ```
-ext.load.libs['js/string/hs'];
+ext.load.libs['string/hs'];
 
 or
 
-var hs    =  await ext.load.libs['js/string/hs'];
+var hs    =  await ext.load.libs['string/hs'];
 ```
 
 
@@ -52,11 +52,11 @@ var hs    =  await ext.load.libs['js/string/hs'];
 ### load multiple
 
 ```
-await ext.load.libs('js/string/hs','js/string/wildcard');
+await ext.load.libs('string/hs','string/wildcard');
 ```
 or
 ```
-var [hs,wildcard]    =  await ext.load.libs('js/string/hs','js/string/wildcard');
+var [hs,wildcard]    =  await ext.load.libs('string/hs','string/wildcard');
 
 
 //off we go
