@@ -88,7 +88,7 @@ function loader(attach,name='ext',override){
         create();
         
         ext.create.repo('code','javascript-2020','ext-code','main');
-        ext.create.repo('libs','javascript-2020','libs','main');
+        ext.create.repo('libs','javascript-2020','libs','main','js/');
         local();
         github();
         
@@ -113,7 +113,7 @@ function loader(attach,name='ext',override){
         
         function create(){
         
-              ext.create.repo=function(name,owner,repo,branch){
+              ext.create.repo=function(name,owner,repo,branch,def_dir){
                                                                                 //console.log('create',type);
                     var list      = {};
                     
@@ -159,6 +159,9 @@ function loader(attach,name='ext',override){
                     
                     load.text=async function(file,lname){
                                                                                 //console.log('load',lname);
+                          if(def_dir){
+                                file    = def_dir+file;
+                          }
                           var url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
                           if(branch){
                                 url  += `?ref=${branch}`;
