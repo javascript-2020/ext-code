@@ -85,16 +85,20 @@ function loader(attach,name='ext',override){
                                                                                 console.clear();
                                                                                 console.log('ext-code.loader-v1.1');
                                                                                 console.log();
-      ext.defer         = {};
+      ext.load          = {};
+      ext.create        = {};
       
-      create('code','javascript-2020','ext-code','main');
-      create('libs','javascript-2020','libs','main');
+      create();
+      
+      ext.create.repo('code','javascript-2020','ext-code','main');
+      ext.create.repo('libs','javascript-2020','libs','main');
+      local();
+      github();
+      
       
       //snippets();
       
-      local();
       
-      github();
       
       
       return ext;
@@ -109,63 +113,68 @@ function loader(attach,name='ext',override){
             
       }//is
       
-      function create(type,owner,repo,branch){
-                                                                                //console.log('create',type);
-            var list      = {};
-            
-            
-            ext.defer[type]=new Proxy(()=>{},{get,apply});
-            
-            async function get(target,prop){
-                                                                                //console.log('defer.proxy',prop);
-                  var lname   = prop.replaceAll('/','.');
-                  if(list[lname]){
-                        return list[lname];
-                  }
-                  var fn        = await load(lname);
-                  return fn;
+      
+      function create(){
+      
+            ext.create.repo=function(name,owner,repo,branch){
+                                                                                      //console.log('create',type);
+                  var list      = {};
                   
-            }//get
-            
-            function apply(target,thisArg,args){
-            
-                  return Promise.all(args.map(arg=>get(target,arg)));
                   
-            }//apply
-            
-            
-            ext[type] = modproxy(list,notfound);
-            
-            async function notfound(lname,args){
-            
-                  var fn        = await load(lname);
-                  if(typeof fn!='function'){
+                  ext.load[name]=new Proxy(()=>{},{get,apply});
+                  
+                  async function get(target,prop){
+                                                                                      //console.log('defer.proxy',prop);
+                        var lname   = prop.replaceAll('/','.');
+                        if(list[lname]){
+                              return list[lname];
+                        }
+                        var fn        = await load(lname);
                         return fn;
-                  }
-                  var result    = fn.apply(null,args);
-                  return result;
+                        
+                  }//get
                   
-            }//notfound
-            
-            
-            async function load(lname){
-                                                                                //console.log('load',lname);
-                  var file    = lname.replaceAll('.','/');
-                  var url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
-                  var res     = await fetch(url);
-                  if(!res.ok){
-                        console.log('failed to load remote-function: '+file);
-                        return '[ not found '+file+' ]';
-                  }
+                  function apply(target,thisArg,args){
                   
-                  var fnstr       = await res.text();
-                  var fn          = define(fnstr);
+                        return Promise.all(args.map(arg=>get(target,arg)));
+                        
+                  }//apply
                   
-                  ext[type][lname]     = fn;
                   
-                  return fn;
+                  ext[name] = modproxy(list,notfound);
                   
-            }//load
+                  async function notfound(lname,args){
+                  
+                        var fn        = await load(lname);
+                        if(typeof fn!='function'){
+                              return fn;
+                        }
+                        var result    = fn.apply(null,args);
+                        return result;
+                        
+                  }//notfound
+                  
+                  
+                  async function load(lname){
+                                                                                      //console.log('load',lname);
+                        var file    = lname.replaceAll('.','/');
+                        var url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
+                        var res     = await fetch(url);
+                        if(!res.ok){
+                              console.log('failed to load remote-function: '+file);
+                              return '[ not found '+file+' ]';
+                        }
+                        
+                        var fnstr       = await res.text();
+                        var fn          = define(fnstr);
+                        
+                        ext[name][lname]     = fn;
+                        
+                        return fn;
+                        
+                  }//load
+                  
+            }//create.repo
             
       }//create
       
@@ -178,7 +187,7 @@ function loader(attach,name='ext',override){
       
             var list    = {};
             
-            ext.defer.github=new Proxy(()=>{},{get,apply});
+            ext.load.github=new Proxy(()=>{},{get,apply});
             
             async function get(target,prop){
                                                                                 //console.log('defer.proxy',prop);
@@ -242,7 +251,7 @@ function loader(attach,name='ext',override){
       
             var list    = {};
             
-            ext.defer.local=new Proxy(()=>{},{get,apply});
+            ext.load.local=new Proxy(()=>{},{get,apply});
             
             function get(target,prop){
                                                                                 //console.log('defer.proxy',prop);
