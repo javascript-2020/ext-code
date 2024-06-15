@@ -2,7 +2,7 @@
 
 
 
-        async function du(dir,pat,disp){
+        async function du(dir,pat,disp=true){
 
               var [wildcard,hs]   = await ext.load.libs('string/wildcard','string/hs');
               
