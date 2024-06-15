@@ -54,7 +54,9 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
       return loader;
       
 function loader(attach,name='ext',override){
-
+                                                                                console.clear();
+                                                                                console.log('ext-code.loader-v1.1');
+                                                                                console.log();
   var ext                   = {};
   ext[Symbol.toStringTag]   = 'ext-code';
   
@@ -80,9 +82,8 @@ function loader(attach,name='ext',override){
                     globalThis[name]    = ext;
               }
         }
-                                                                                console.clear();
-                                                                                console.log('ext-code.loader-v1.1');
-                                                                                console.log();
+        
+        
         ext.load          = {};
         ext.create        = {};
         create();
