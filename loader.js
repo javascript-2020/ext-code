@@ -130,7 +130,7 @@ function loader(attach,name='ext',override){
                           if(list[key]){
                                 return list[key];
                           }
-                          var fn        = await load(prop,lname);
+                          var fn        = await load.text(prop,lname);
                           return fn;
                           
                     }//get
@@ -147,9 +147,9 @@ function loader(attach,name='ext',override){
                     ext[name] = modproxy(list,notfound);
                     
                     async function notfound(lname,args){
-                    
+                                                                                console.log('notfound',lname);
                           var file    = lname.join('/');
-                          var fn      = await load(file,lname);
+                          var fn      = await load.text(file,lname);
                           if(typeof fn!='function'){
                                 return fn;
                           }
@@ -159,7 +159,7 @@ function loader(attach,name='ext',override){
                     }//notfound
                     
                     
-                    async function load(file,lname){
+                    load.text=async function(file,lname){
                                                                                 //console.log('load',lname);
                           var url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
                           if(branch){
@@ -395,18 +395,19 @@ function loader(attach,name='ext',override){
         
         function modproxy(mem,notfound){
         
-              modproxy.key=lname=>lname.join(',');
+              modproxy.key    = lname=>lname.join(',');
               
               return newproxy();
               
               
               function getter(target,name,receiver,lname){
               
+                    lname   = structuredClone(lname);
                     lname.push(name);
                     var key   = modproxy.key(lname);
-                                                                                  console.log(`rd : ${key}`);
+                                                                                  //console.log(`rd : ${key}`);
                     if(key in mem){
-                                                                                  console.log('found');
+                                                                                  //console.log('found');
                           return mem[key];
                     }
                     return newproxy(()=>{},lname);
@@ -416,9 +417,10 @@ function loader(attach,name='ext',override){
               
               function setter(target,name,newval,lname){
               
+                    lname   = structuredClone(lname);
                     lname.push(name);
                     var key   = modproxy.key(lname);
-                                                                                  console.log(`wt : ${key} - ${newval}`);
+                                                                                  //console.log(`wt : ${key} - ${newval}`);
                     mem[key]    = newval;
                     
               }//setter
