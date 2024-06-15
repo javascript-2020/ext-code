@@ -55,12 +55,10 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
       
 function loader(attach,name='ext',override){
 
-        var mod                   = 'ext-code';
-        
-        var ext                   = {};
-        ext[Symbol.toStringTag]   = mod;
-        
-        
+  var ext                   = {};
+  ext[Symbol.toStringTag]   = 'ext-code';
+  
+  
         if(attach){
               if(is(attach[name])){
                     return attach[name];
@@ -107,7 +105,7 @@ function loader(attach,name='ext',override){
         
               var str       = Object.prototype.toString.call(v);
               str           = str.slice(8,-1);
-              var result    = (str==mod);
+              var result    = (str==ext[Symbol.toStringTag]);
               return result;
               
         }//is
