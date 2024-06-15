@@ -106,7 +106,7 @@ function loader(attach,name='ext',override=true){
         
               var str       = Object.prototype.toString.call(v);
               str           = str.slice(8,-1);
-              console.log(str,ext[Symbol.toStringTag]);
+              console.log(name,str,ext[Symbol.toStringTag]);
               var result    = (str==ext[Symbol.toStringTag]);
               return result;
               
