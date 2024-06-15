@@ -282,6 +282,9 @@ function loader(attach,name='ext',override){
             function getter(target,name,receiver,lname){
             
                   lname  += '.'+name;
+                  if(lname in mem){
+                        return mem[lname];
+                  }
                   return newproxy(()=>{},lname);
                   
             }//getter
