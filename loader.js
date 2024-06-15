@@ -135,7 +135,7 @@ function loader(attach,name='ext',override){
                     
                     load.apply=function(target,thisArg,args){
                     
-                          return Promise.all(args.map(arg=>get(target,arg)));
+                          return Promise.all(args.map(arg=>load.get(target,arg)));
                           
                     }//apply
                     
@@ -145,7 +145,7 @@ function loader(attach,name='ext',override){
                     ext[name] = modproxy(list,notfound);
                     
                     async function notfound(lname,args){
-                                                                                console.log('notfound',lname);
+                                                                                //console.log('notfound',lname);
                           var file    = lname.join('/');
                           var fn      = await load.text(file,lname);
                           if(typeof fn!='function'){
@@ -197,9 +197,11 @@ function loader(attach,name='ext',override){
         
               var list    = {};
               
-              ext.load.github=new Proxy(()=>{},{get,apply});
+              var load    = {};
+              var cur;
+              var proxy   = {};
               
-              async function get(target,prop){
+              load.get=async function(target,prop){
                                                                                   //console.log('defer.proxy',prop);
                     if(list[lname]){
                           return list[lname];
@@ -209,24 +211,23 @@ function loader(attach,name='ext',override){
                     
               }//get
               
-              function apply(target,thisArg,args){
+              load.apply=function(target,thisArg,args){
               
-                    return Promise.all(args.map(arg=>get(target,arg)));
+                    return Promise.all(args.map(arg=>load.get(target,arg)));
                     
               }//apply
               
+              ext.load.github=new Proxy(()=>{},{get:load.get,apply:load.apply});
               
-              var cur;
-              ext.github    = new Proxy({},{get:get2,apply:apply2});    //  modproxy(list,notfound);
               
-              async function get2(target,prop){
+              proxy.get=async function(target,prop){
               
                     cur   = prop;
                     if(list[prop]){
                           return list[prop];
                     }
                     var {owner,repo,branch,file}    = parse(prop);
-                    var fn    = await load(owner,repo,branch,file);
+                    var fn    = await load.text(owner,repo,branch,file);
                     
                     ext.github[prop]    = fn;
                     
@@ -234,7 +235,7 @@ function loader(attach,name='ext',override){
                     
               }//get2
               
-              async function apply2(target,thisArg,args){
+              proxy.apply=async function(target,thisArg,args){
               
                     var fn    = list[cur];
                     if(typeof fn!='function'){
@@ -245,20 +246,23 @@ function loader(attach,name='ext',override){
                     
               }//apply2
               
+              ext.github    = new Proxy({},{get:proxy.get,apply:proxy.apply});
+              
+              
               async function notfound(lname,args){
               
                     var {owner,repo,branch,file}    = parse(lname);
                     
-                    var fn        = await load(owner,repo,branch,file);
+                    var fn        = await load.text(owner,repo,branch,file);
                     if(typeof fn!='function'){
                           return fn;
                     }
-                    var result    = fn.apply(null,args);
+                    var result    = await fn.apply(null,args);
                     return result;
                     
               }//notfound
               
-              async function load(owner,repo,branch,file){
+              load.text=async function(owner,repo,branch,file){
               
                     var url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
                     if(branch){
@@ -303,9 +307,12 @@ function loader(attach,name='ext',override){
         
               var list    = {};
               
-              ext.load.local    = new Proxy(()=>{},{get,apply});
+              var load    = {};
+              var cur;
+              var proxy   = {};
               
-              function get(target,prop){
+              
+              load.get=function(target,prop){
                                                                                   //console.log('defer.proxy',prop);
                     if(list[prop]){
                           return list[prop];
@@ -315,17 +322,17 @@ function loader(attach,name='ext',override){
                     
               }//get
               
-              function apply(target,thisArg,args){
+              load.apply=function(target,thisArg,args){
               
-                    return args.map(arg=>get(target,arg));
+                    return args.map(arg=>load.get(target,arg));
                     
               }//apply
               
+              ext.load.local    = new Proxy(()=>{},{get:load.get,apply:load.apply});
               
-              ext.local    = new Proxy({},{get:get2,apply:apply2});     //modproxy(list,notfound);
-              var cur;
               
-              function get2(target,prop){
+              
+              proxy.get=function(target,prop){
               
                     cur   = prop;
                     if(list[prop]){
@@ -334,9 +341,9 @@ function loader(attach,name='ext',override){
                     var fn    = load(prop);
                     return fn;
                     
-              }//get2
+              }//get
               
-              function apply2(target,thisArg,args){
+              proxy.apply=function(target,thisArg,args){
               
                     var fn    = list[cur];
                     
@@ -348,21 +355,11 @@ function loader(attach,name='ext',override){
                     
               }//apply
               
-/*
-              function notfound(prop,args,thisarg=null){
+              ext.local    = new Proxy({},{get:proxy.get,apply:proxy.apply});
               
-                    var fn    = load(prop);
-                    if(typeof fn!='function'){
-                          return fn;
-                    }
-                    var result    = fn.apply(thisarg,args);
-                    return result;
-                    
-            }//notfound
-*/
-
-            function load(file){
-                                                                                  console.log('local.load',file);
+              
+              load.text=function(file){
+                                                                                //console.log('local.load',file);
                     var fnstr     = fs.readFileSync(file,'utf8');
                     var fn        = define(fnstr);
                     
