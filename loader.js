@@ -230,7 +230,7 @@ function loader(attach,name='ext',override=true){
                     var {owner,repo,branch,file}    = parse(prop);
                     var fn    = await load.text(owner,repo,branch,file);
                     
-                    ext.github[prop]    = fn;
+                    list[prop]    = fn;
                     
                     return fn;
                     
@@ -364,7 +364,7 @@ function loader(attach,name='ext',override=true){
                     var fnstr     = fs.readFileSync(file,'utf8');
                     var fn        = define(fnstr);
                     
-                    ext.local[file]   = fn;
+                    list[file]   = fn;
                     
                     return fn;
                     
