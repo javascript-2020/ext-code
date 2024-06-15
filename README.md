@@ -53,7 +53,9 @@ var hs    =  await ext.load.libs['js/string/hs'];
 
 ```
 await ext.load.libs('js/string/hs','js/string/wildcard');
-
+```
+or
+```
 var [hs,wildcard]    =  await ext.load.libs('js/string/hs','js/string/wildcard');
 
 
