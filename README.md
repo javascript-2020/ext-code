@@ -61,13 +61,18 @@ var [hs,wildcard]    =  await ext.load.libs('js/string/hs','js/string/wildcard')
 
 ```
 
+<br>
+
 ### add github repo
 
 you can add an accessible github repo like so
 
 owner   : random
+
 repo    : test
+
 branch  : main
+
 path    : test/test
 
 branch is optional, defaults to default branch
