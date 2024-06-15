@@ -210,6 +210,27 @@ configuration can be loaded
 ```
 
 
+```
+        (()=>{
+          
+          var obj   = {};
+
+                obj.myfn=function(){console.log('myfn')};
+
+                obj.test=function(){test()};
+
+                function test(){
+
+                  console.log('test me');
+
+                }//test
+
+          return obj;
+
+        })();
+```
+
+
 
 
 
