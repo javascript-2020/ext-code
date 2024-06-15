@@ -2,26 +2,26 @@
 
 /*
 
-    - (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))();
-    
-    - (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(window,'ext');
-    
-    - var ext   = (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(null);
-    
-    - ( (typeof ext=='undefined') &&
-        (ext=(await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(null))
-      );
-      
-    - var loader    = await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval));
-        - loader();
-        - loader(window);
-        - loader(window,'test');
+        (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))();
+        
+        (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(window,'ext');
+        
+        var ext   = (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(null);
+        
+        ( (typeof ext=='undefined') &&
+          (ext=(await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(null))
+        );
+        
+        var loader    = await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval));
+        loader();
+        loader(window);
+        loader(window,'test');
         
         
   nodejs
   ------
   
-    -   var ext   = (await new Promise(resolve=>{
+        var ext   = (await new Promise(resolve=>{
               var loader    = 'https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js',body='';
               require('https').get(loader,async res=>{for await(data of res)body+=data;resolve(eval(body))}).end();
         }))();
@@ -152,7 +152,9 @@ function loader(attach,name='ext',override){
                   
                   var fnstr       = await res.text();
                   var fn          = define(fnstr);
-                  list[lname]     = fn;
+                  
+                  ext[type][lname]     = fn;
+                  
                   return fn;
                   
             }//load
@@ -218,8 +220,9 @@ function loader(attach,name='ext',override){
                   var fnstr       = await res.text();
                   var fn          = define(fnstr);
                   
-                  var lname       = `${owner}:${repo}:${branch}:${file}`;
-                  list[lname]     = fn;
+                  var lname             = `${owner}:${repo}:${branch}:${file}`;
+                  ext.github[lname]     = fn;
+                  
                   return fn;
                   
             }//notfound
