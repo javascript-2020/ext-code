@@ -64,7 +64,7 @@ function loader(attach,name='ext',override){
                     return attach[name];
               }
               if(!override){
-                    throw `unable to create globalThis.${name}`;
+                    throw `unable to create attach.${name}`;
               }
               attach[name]    = ext;
         }else{
