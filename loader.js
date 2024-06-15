@@ -87,7 +87,6 @@ function loader(attach,name='ext',override){
                                                                                 console.log();
         ext.load          = {};
         ext.create        = {};
-        
         create();
         
         ext.create.repo('code','javascript-2020','ext-code','main');
@@ -117,65 +116,68 @@ function loader(attach,name='ext',override){
         function create(){
         
               ext.create.repo=function(name,owner,repo,branch){
-                                                                                        //console.log('create',type);
+                                                                                //console.log('create',type);
                     var list      = {};
                     
                     
-                    ext.load[name]=new Proxy(()=>{},{get,apply});
+                    var load    = {};
                     
-                    async function get(target,prop){
-                                                                                        //console.log('defer.proxy',prop);
-                          var lname   = prop.replaceAll('/','.');
-                          if(list[lname]){
-                                return list[lname];
+                    load.get=async function(target,prop){
+                                                                                //console.log('defer.proxy',prop);
+                          var lname   = prop.split('/');
+                          var key     = modproxy.key(lname);
+                          
+                          if(list[key]){
+                                return list[key];
                           }
-                          var fn        = await load(lname);
+                          var fn        = await load(prop,lname);
                           return fn;
                           
                     }//get
                     
-                    function apply(target,thisArg,args){
+                    load.apply=function(target,thisArg,args){
                     
                           return Promise.all(args.map(arg=>get(target,arg)));
                           
                     }//apply
+                    
+                    ext.load[name]=new Proxy(()=>{},{get:load.get,apply:load.apply});
                     
                     
                     ext[name] = modproxy(list,notfound);
                     
                     async function notfound(lname,args){
                     
-                          var fn        = await load(lname);
+                          var file    = lname.join('/');
+                          var fn      = await load(file,lname);
                           if(typeof fn!='function'){
                                 return fn;
                           }
-                          var result    = fn.apply(null,args);
+                          var result    = await fn.apply(null,args);
                           return result;
                           
                     }//notfound
                     
                     
-                    async function load(lname){
-                                                                                        //console.log('load',lname);
-                          var file    = lname.replaceAll('.','/');
-                          
+                    async function load(file,lname){
+                                                                                //console.log('load',lname);
                           var url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
                           if(branch){
                                 url  += `?ref=${branch}`;
                           }
                           var opts    = {headers:{accept:'application/vnd.github.raw+json'}};
-                          //var url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
                           var res     = await fetch(url,opts);
                           
                           if(!res.ok){
-                                console.log('failed to load remote-function: '+file);
+                                                                                console.log('failed to load remote-function: '+file);
                                 return '[ not found '+file+' ]';
                           }
                           
                           var fnstr       = await res.text();
                           var fn          = define(fnstr);
                           
-                          ext[name][lname]     = fn;
+                          var key           = modproxy.key(lname);
+                          ext[name][key]    = fn;
                           
                           return fn;
                           
@@ -213,15 +215,38 @@ function loader(attach,name='ext',override){
               }//apply
               
               
-              ext.github    = modproxy(list,notfound);
+              var cur;
+              ext.github    = new Proxy({},{get:get2,apply:apply2});    //  modproxy(list,notfound);
+              
+              async function get2(target,prop){
+              
+                    cur   = prop;
+                    if(list[prop]){
+                          return list[prop];
+                    }
+                    var {owner,repo,branch,file}    = parse(prop);
+                    var fn    = await load(owner,repo,branch,file);
+                    
+                    ext.github[prop]    = fn;
+                    
+                    return fn;
+                    
+              }//get2
+              
+              async function apply2(target,thisArg,args){
+              
+                    var fn    = list[cur];
+                    if(typeof fn!='function'){
+                          return fn;
+                    }
+                    var result    = await fn.apply(thisArg,args);
+                    return result;
+                    
+              }//apply2
               
               async function notfound(lname,args){
               
-                    var parts     = lname.split(':');
-                    var owner     = parts[0];
-                    var repo      = parts[1];
-                    var branch    = parts.length==4 ? parts[2] : null;
-                    var file      = parts.at(-1);
+                    var {owner,repo,branch,file}    = parse(lname);
                     
                     var fn        = await load(owner,repo,branch,file);
                     if(typeof fn!='function'){
@@ -257,6 +282,19 @@ function loader(attach,name='ext',override){
                     
               }//load
               
+              function parse(prop){
+              
+                    var parts     = prop.split(':');
+                    
+                    var owner     = parts[0];
+                    var repo      = parts[1];
+                    var branch    = parts.length==4 ? parts[2] : null;
+                    var file      = parts.at(-1);
+                    
+                    return {owner,repo,branch,file};
+                    
+              }//parse
+              
         }//github
         
         
@@ -264,7 +302,7 @@ function loader(attach,name='ext',override){
         
               var list    = {};
               
-              ext.load.local=new Proxy(()=>{},{get,apply});
+              ext.load.local    = new Proxy(()=>{},{get,apply});
               
               function get(target,prop){
                                                                                   //console.log('defer.proxy',prop);
@@ -283,11 +321,36 @@ function loader(attach,name='ext',override){
               }//apply
               
               
-              ext.local    = modproxy(list,notfound);
+              ext.local    = new Proxy({},{get:get2,apply:apply2});     //modproxy(list,notfound);
+              var cur;
               
+              function get2(target,prop){
+              
+                    cur   = prop;
+                    if(list[prop]){
+                          return list[prop];
+                    }
+                    var fn    = load(prop);
+                    return fn;
+                    
+              }//get2
+              
+              function apply2(target,thisArg,args){
+              
+                    var fn    = list[cur];
+                    
+                    if(typeof fn!='function'){
+                          return fn;
+                    }
+                    var result    = fn.apply(thisArg,args);
+                    return result;
+                    
+              }//apply
+              
+/*
               function notfound(prop,args,thisarg=null){
               
-                    var fn        = load(prop);
+                    var fn    = load(prop);
                     if(typeof fn!='function'){
                           return fn;
                     }
@@ -295,7 +358,8 @@ function loader(attach,name='ext',override){
                     return result;
                     
             }//notfound
-            
+*/
+
             function load(file){
                                                                                   console.log('local.load',file);
                     var fnstr     = fs.readFileSync(file,'utf8');
@@ -309,7 +373,8 @@ function loader(attach,name='ext',override){
               
         }//local
         
-        
+  //:
+  
         function define(fnstr){
                                                                                   //console.log(fnstr);
               var code    = `
@@ -330,19 +395,19 @@ function loader(attach,name='ext',override){
         
         function modproxy(mem,notfound){
         
+              modproxy.key=lname=>lname.join(',');
+              
               return newproxy();
               
               
               function getter(target,name,receiver,lname){
               
-                    if(lname){
-                          lname  += '.';
-                    }
-                    lname  += name;
-                                                                                  console.log(`rd : ${lname}`);
-                    if(lname in mem){
-                                                                                  console.log('f');
-                          return mem[lname];
+                    lname.push(name);
+                    var key   = modproxy.key(lname);
+                                                                                  console.log(`rd : ${key}`);
+                    if(key in mem){
+                                                                                  console.log('found');
+                          return mem[key];
                     }
                     return newproxy(()=>{},lname);
                     
@@ -351,20 +416,19 @@ function loader(attach,name='ext',override){
               
               function setter(target,name,newval,lname){
               
-                    lname  += '.'+name;
-                    lname   = lname.slice(1);
-                                                                                  console.log(`wt : ${lname} - ${newval}`);
-                    mem[lname]    = newval;
+                    lname.push(name);
+                    var key   = modproxy.key(lname);
+                                                                                  console.log(`wt : ${key} - ${newval}`);
+                    mem[key]    = newval;
                     
               }//setter
               
               
               function applyer(target,thisArg,args,lname){
               
-                    //lname   = lname.slice(1);
-                    
-                    if(lname in mem){
-                          var v   = mem[lname];
+                    var key   = modproxy.key(lname);
+                    if(key in mem){
+                          var v   = mem[key];
                           if(typeof v==='function'){
                                                                                   //console.log(`fn : ${lname} - [${args}]`);
                                 return v.apply(thisArg,args);
@@ -377,11 +441,8 @@ function loader(attach,name='ext',override){
               }//applyer
               
               
-              function newproxy(target,lname){
+              function newproxy(target=()=>{},lname=[]){
               
-                    target    = target||(()=>{});
-                    lname     = lname||'';
-                    
                     var proxy   = new Proxy(target,{
                                         get:(target,name,receiver)=>getter(target,name,receiver,lname),
                                         set:(target,name,newval)=>setter(target,name,newval,lname),
