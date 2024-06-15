@@ -53,7 +53,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
 
       return loader;
       
-function loader(attach,name='ext',override){
+function loader(attach,name='ext',override=true){
                                                                                 console.clear();
                                                                                 console.log('ext-code.loader-v1.1');
                                                                                 console.log();
