@@ -27,6 +27,13 @@
         }))();
         
         
+  fs
+  --
+  
+        var ext     = eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.js','utf8'))();
+        
+        
+        
 */
 
 
@@ -67,7 +74,8 @@ function loader(attach,name='ext',override){
                   globalThis[name]    = ext;
             }
       }
-                                                                                console.log('ext-code.loader-v1.0');
+                                                                                console.clear();
+                                                                                console.log('ext-code.loader-v1.1');
                                                                                 console.log();
       ext.defer         = {};
       
@@ -259,7 +267,9 @@ function loader(attach,name='ext',override){
                                                                                 console.log('local.load',file);
                   var fnstr     = fs.readFileSync(file,'utf8');
                   var fn        = define(fnstr);
-                  list[file]   = fn;
+                  
+                  ext.local[file]   = fn;
+                  
                   return fn;
                   
             }//load
@@ -292,8 +302,13 @@ function loader(attach,name='ext',override){
             
             function getter(target,name,receiver,lname){
             
-                  lname  += '.'+name;
+                  if(lname){
+                        lname  += '.';
+                  }
+                  lname  += name;
+                                                                                console.log(`rd : ${lname}`);
                   if(lname in mem){
+                                                                                console.log('f');
                         return mem[lname];
                   }
                   return newproxy(()=>{},lname);
@@ -305,7 +320,7 @@ function loader(attach,name='ext',override){
             
                   lname  += '.'+name;
                   lname   = lname.slice(1);
-                                                                                //console.log(`wt : ${lname} - ${newval}`);
+                                                                                console.log(`wt : ${lname} - ${newval}`);
                   mem[lname]    = newval;
                   
             }//setter
@@ -313,7 +328,7 @@ function loader(attach,name='ext',override){
             
             function applyer(target,thisArg,args,lname){
             
-                  lname   = lname.slice(1);
+                  //lname   = lname.slice(1);
                   
                   if(lname in mem){
                         var v   = mem[lname];
