@@ -317,7 +317,7 @@ function loader(attach,name='ext',override){
                     if(list[prop]){
                           return list[prop];
                     }
-                    var fn    = load(prop);
+                    var fn    = load.text(prop);
                     return fn;
                     
               }//get
@@ -338,7 +338,7 @@ function loader(attach,name='ext',override){
                     if(list[prop]){
                           return list[prop];
                     }
-                    var fn    = load(prop);
+                    var fn    = load.text(prop);
                     return fn;
                     
               }//get
