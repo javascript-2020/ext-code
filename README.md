@@ -191,6 +191,29 @@ function mod(a,b,c){
 }
 ```
 
+```
+        (()=>{
+          
+          var obj   = {};
+
+
+                obj.myfn=function(){console.log('myfn')};
+
+
+                obj.test=function(){test()};
+
+                function test(){
+
+                  console.log('test me');
+
+                }//test
+
+
+          return obj;
+
+        })();
+```
+
 libraries can be formed
 
 ```
@@ -210,25 +233,6 @@ configuration can be loaded
 ```
 
 
-```
-        (()=>{
-          
-          var obj   = {};
-
-                obj.myfn=function(){console.log('myfn')};
-
-                obj.test=function(){test()};
-
-                function test(){
-
-                  console.log('test me');
-
-                }//test
-
-          return obj;
-
-        })();
-```
 
 
 
