@@ -36,25 +36,25 @@ https://github.com/javascript-2020/ext-code/tree/main/fn
 <br>
 
 
-### defer
+### load
 
 ```
-ext.defer.libs['js/string/hs'];
+ext.load.libs['js/string/hs'];
 
 or
 
-var hs    =  await ext.defer.libs['js/string/hs'];
+var hs    =  await ext.load.libs['js/string/hs'];
 ```
 
 
 <br>
 
-### defer multiple
+### load multiple
 
 ```
-await ext.defer.libs('js/string/hs','js/string/wildcard');
+await ext.load.libs('js/string/hs','js/string/wildcard');
 
-var [hs,wildcard]    =  await ext.defer.libs('js/string/hs','js/string/wildcard');
+var [hs,wildcard]    =  await ext.load.libs('js/string/hs','js/string/wildcard');
 
 
 //off we go
@@ -64,21 +64,19 @@ var [hs,wildcard]    =  await ext.defer.libs('js/string/hs','js/string/wildcard'
 ### github
 
 ```
-var url      =    `${owner}:${repo}:${branch}:${path}`;
+var url      = `${owner}:${repo}:${branch}:${path}`;
 
-var rando    =    'nastyox:Rando.js:2.0.0-cryptographically-secure-version:code/plain-javascript/2.0.0/rando.js';
+var rando    = 'nastyox:Rando.js:2.0.0-cryptographically-secure-version:code/plain-javascript/2.0.0/rando.js';
 var n        = await ext.github[rando]();
 console.log(n);
 ```
 
 ```
-var rando    =    'nastyox:Rando.js:2.0.0-cryptographically-secure-version:code/plain-javascript/2.0.0/rando.js';
-await ext.defer.github[rando];
+var rando    = 'nastyox:Rando.js:2.0.0-cryptographically-secure-version:code/plain-javascript/2.0.0/rando.js';
+await ext.load.github[rando];
 
-var n=ext.github[rando]();
+var n        = ext.github[rando]();
 console.log(n);
-
-
 ```
 
 ### local
@@ -171,29 +169,6 @@ libraries can be formed
     }
 ```
 
-however currently libraries will need to be loaded like this
-
-```
-//  /work/tmp/test.js
-
-        test;
-        test.fn=()=>alert('test.fn');
-        function test(){
-
-              alert([...arguments].join(' '));
-
-        }
-```
-
-and then loaded like
-
-```
-var test='/work/tmp/test.js';
-var test=ext.defer.local[test];
-test();
-test.fn();
-```
-
 configuration can be loaded
 
 ```
@@ -202,12 +177,6 @@ configuration can be loaded
 }
 ```
 
-but again for time being it will need to be loaded
-
-```
-var config=ext.defer.local['/work/tmp/config.js'];
-alert(config.hello);
-```
 
 
 
