@@ -217,11 +217,10 @@ function mod(a,b,c){
 libraries can be formed
 
 ```
-    mod;
-    mod.test=()=>alert('test');
     function mod(){
         alert('mod');
     }
+    mod.test=()=>alert('test');
 ```
 
 configuration can be loaded
