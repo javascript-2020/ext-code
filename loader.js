@@ -178,7 +178,7 @@ function loader(attach,name='ext',override=true){
                           
                           var fnstr       = await res.text();
                           var fn          = define(fnstr);
-                          
+                          console.log(Object.prototype.toString.call(fn));
                           if(Object.prototype.toString.call(fn)==='[object Promise]'){
                           console.log('await');
                                 fn    = await fn;
