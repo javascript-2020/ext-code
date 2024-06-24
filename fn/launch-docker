@@ -4,9 +4,11 @@
   
         //mod['nodejs-min'].start('ssh test',2222);
 
-  
+console.log(1);  
         var modproxy    = await ext.load.libs['core/proxy/modproxy.js'];
+console.log(2);
         var proxy       = modproxy(launch);
+console.log(3);
         return proxy;
 
         
