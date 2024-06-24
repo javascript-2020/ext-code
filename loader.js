@@ -180,6 +180,7 @@ function loader(attach,name='ext',override=true){
                           var fn          = define(fnstr);
                           
                           if(Object.prototype.toString.call(fn)==='[object Promise]'){
+                          console.log('await');
                                 fn    = await fn;
                           }
                           
