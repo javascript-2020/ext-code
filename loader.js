@@ -54,13 +54,13 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
       return loader;
       
 function loader(attach,name='ext',override=true){
-                                                                                console.clear();
-                                                                                console.log('ext-code.loader-v1.1');
-                                                                                console.log();
+
   var ext                   = {};
   ext[Symbol.toStringTag]   = 'ext-code';
-  
-  
+                                                                                //console.clear();
+                                                                                console.log('ext-code.loader-v1.1');
+                                                                                //console.log();
+                                                                                
         if(attach){
               if(is(attach[name])){
                     return attach[name];
@@ -115,14 +115,14 @@ function loader(attach,name='ext',override=true){
         function create(){
         
               ext.create.repo=function(name,owner,repo,branch,def_dir){
-                                                                                //console.log('create',type);
+                                                                                ext.df && console.log('create',type);
                     var list      = {};
                     
                     
                     var load    = {};
                     
                     load.get=async function(target,prop){
-                                                                                //console.log('defer.proxy',prop);
+                                                                                ext.df && console.log('defer.proxy',prop);
                           var lname   = prop.split('/');
                           var key     = modproxy.key(lname);
                           
@@ -146,7 +146,7 @@ function loader(attach,name='ext',override=true){
                     ext[name] = modproxy(list,notfound);
                     
                     async function notfound(lname,args){
-                                                                                //console.log('notfound',lname);
+                                                                                ext.df && console.log('notfound',lname);
                           var file    = lname.join('/');
                           var fn      = await load.text(file,lname);
                           if(typeof fn!='function'){
@@ -159,7 +159,7 @@ function loader(attach,name='ext',override=true){
                     
                     
                     load.text=async function(file,lname){
-                                                                                //console.log('load',lname);
+                                                                                ext.df && console.log('load',lname);
                           if(def_dir){
                                 file    = def_dir+file;
                           }
@@ -203,7 +203,7 @@ function loader(attach,name='ext',override=true){
               var proxy   = {};
               
               load.get=async function(target,prop){
-                                                                                  //console.log('defer.proxy',prop);
+                                                                                  ext.df && console.log('load.proxy',prop);
                     if(list[lname]){
                           return list[lname];
                     }
@@ -314,7 +314,7 @@ function loader(attach,name='ext',override=true){
               
               
               load.get=function(target,prop){
-                                                                                  //console.log('defer.proxy',prop);
+                                                                                  ext.df && console.log('load.local',prop);
                     if(list[prop]){
                           return list[prop];
                     }
@@ -360,7 +360,7 @@ function loader(attach,name='ext',override=true){
               
               
               load.text=function(file){
-                                                                                //console.log('local.load',file);
+                                                                                ext.df && console.log('local.load',file);
                     var fnstr     = fs.readFileSync(file,'utf8');
                     var fn        = define(fnstr);
                     
