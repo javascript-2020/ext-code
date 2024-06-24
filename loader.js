@@ -376,7 +376,7 @@ function loader(attach,name='ext',override=true){
   //:
   
         function define(fnstr){
-                                                                                  //console.log(fnstr);
+                                                                                  ext.df && console.log('define',fnstr);
               var code    = `
                     (()=>{
                     
@@ -387,7 +387,7 @@ function loader(attach,name='ext',override=true){
               `;
               
               var fn    = eval(code);
-                                                                                  //console.log(fn);
+                                                                                  ext.df && console.log('define',fn);
               return fn;
               
         }//define
