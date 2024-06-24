@@ -182,6 +182,7 @@ function loader(attach,name='ext',override=true){
                           if(Object.prototype.toString.call(fn)==='[object Promise]'){
                           console.log('await');
                                 fn    = await fn;
+                                console.log(fn);
                           }
                           
                           var key           = modproxy.key(lname);
