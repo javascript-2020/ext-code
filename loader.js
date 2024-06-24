@@ -179,6 +179,10 @@ function loader(attach,name='ext',override=true){
                           var fnstr       = await res.text();
                           var fn          = define(fnstr);
                           
+                          if(Object.prototype.toString.call(fn)==='[object Promise]'){
+                                fn    = await fn;
+                          }
+                          
                           var key           = modproxy.key(lname);
                           ext[name][key]    = fn;
                           
