@@ -122,7 +122,7 @@ function loader(attach,name='ext',override=true){
                     var load    = {};
                     
                     load.get=async function(target,prop){
-                                                                                ext.df && console.log('defer.proxy',prop);
+                                                                                ext.df && console.log(`load.${name}`,prop);
                           var lname   = prop.split('/');
                           var key     = modproxy.key(lname);
                           
@@ -130,6 +130,7 @@ function loader(attach,name='ext',override=true){
                                 return list[key];
                           }
                           var fn        = await load.text(prop,lname);
+                                                                                ext.df && console.log(`load.${name}`,prop,typeof fn);
                           return fn;
                           
                     }//get
