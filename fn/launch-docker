@@ -8,7 +8,7 @@
 
         //docker['nodejs-min'].start('ssh-test',2222);
         //docker['ssh-test'].stop();
-        //docker['ssh-test'].remove();
+        //docker['ssh-test'].remove(true);
         
         var modproxy    = await ext.load.libs['core/proxy/modproxy.js'];
         var proxy       = modproxy(launch,{promiseCompat:true});
@@ -38,9 +38,11 @@
                       name    = parts[0];
                       stop();
                 }
+                
                 if(mode=='rem' || mode=='remove'){
-                      name    = parts[0];
-                      stop();
+                      name        = parts[0];
+                      var force   = args[0];
+                      remove(force);
                 }
                 
                 
@@ -53,15 +55,15 @@
                             var {stdout,stderr}   = await exec(cmd,opts);
                       }
                       catch(err2){
-                            var err3   = err2;
+                            var err   = err2;
                       }
                       
-                      if(err3){
+                      if(err){
                             console.error('error');
                             console.log();
-                            console.log(err3.cmd);
+                            console.log(err.cmd);
                             console.log();
-                            console.log(err3.stderr);
+                            console.log(err.stderr);
                             return;
                       }
                       
@@ -79,38 +81,64 @@
                 
                       var opts    = {};
                       var cmd     = `docker kill ${name}`;
-                      var {err,stdout,stderr}   = await exec(cmd,opts)
                       
-                      if(err){
-                            console.error(err);
+                      try{
+                            var {stdout,stderr}   = await exec(cmd,opts)
+                      }
+                      catch(err2){
+                            var err   = err2;
                       }
                       
-                      console.log(stdout);
-                      console.log(stderr);
-                      
                       if(err){
+                            console.error('error');
+                            console.log();
+                            console.log(err.cmd);
+                            console.log();
+                            console.log(err.stderr);
                             return;
                       }
                       
-                      if(mode=='rem'){
-                            remove();
+                      if(stdout){
+                            console.log(stdout);
+                      }
+                      if(stderr){
+                            console.log(stderr);
                       }
                       
                 }//stop
                 
                 
-                async function remove(){
+                async function remove(force){
                 
                       var opts    = {};
-                      var cmd     = `docker rm ${name}`;
-                      var {err,stdout,stderr}   = await exec(cmd,opts);
+                      var cmd     = 'docker rm ';
+                      if(force){
+                            cmd  += '-f ';
+                      }
+                      cmd  += name;
                       
-                      if(err){
-                            console.error(err);
+                      try{
+                            var {stdout,stderr}   = await exec(cmd,opts);
+                      }
+                      catch(err2){
+                            var err   = err2;
                       }
                       
-                      console.log(stdout);
-                      console.log(stderr);
+                      if(err){
+                            console.error('error');
+                            console.log();
+                            console.log(err.cmd);
+                            console.log();
+                            console.log(err.stderr);
+                            return;
+                      }
+
+                      if(stdout){                      
+                            console.log(stdout);
+                      }
+                      if(stderr){
+                            console.log(stderr);
+                      }
                       
                 }//remove
                 
