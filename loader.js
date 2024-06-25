@@ -399,7 +399,7 @@ function loader(attach,name='ext',override=true){
         }//define
         
         
-        function modproxy(mem,notfound){
+        function modproxy(mem,notfound,opts={}){
         
               modproxy.key    = lname=>lname.join(',');
               
@@ -415,6 +415,11 @@ function loader(attach,name='ext',override=true){
                     if(key in mem){
                                                                                   //console.log('found');
                           return mem[key];
+                    }
+                    if(opts.promiseCompat){
+                        if(lname=='then'){
+                            return null;
+                        }
                     }
                     return newproxy(()=>{},lname);
                     
