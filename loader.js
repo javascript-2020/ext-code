@@ -1,12 +1,11 @@
 
 
 /*
+aab
 
 
-var url     = `https://api.github.com/repos/javascript-2020/ext-code/contents/loader.js`,
-    opts    = {headers:{accept:'application/vnd.github.raw+json'}};
-(await fetch(url,opts).then(res=>res.text()).then(eval))();
-
+var url   = `https://api.github.com/repos/javascript-2020/ext-code/contents/loader.js`,opts={headers:{accept:'application/vnd.github.raw+json'}};
+fetch(url,opts).then(res=>res.text()).then(eval))();
 
 (await fetch(`https://api.github.com/repos/javascript-2020/ext-code/contents/loader.js`,{headers:{accept:'application/vnd.github.raw+json'}}).then(res=>res.text()).then(eval))();
 
@@ -90,11 +89,11 @@ function loader(attach,name='ext',override=true){
         create();
         local();
         github();
-
-  
+        
+        
         ext.create.repo('code','javascript-2020','ext-code','main');
         ext.create.repo('libs','javascript-2020','libs','main','js/');
-
+        
         
         //snippets();
         
@@ -180,12 +179,6 @@ function loader(attach,name='ext',override=true){
                           
                           var fnstr       = await res.text();
                           var fn          = define(fnstr);
-                          console.log(Object.prototype.toString.call(fn));
-                          if(Object.prototype.toString.call(fn)==='[object Promise]'){
-                          console.log('await');
-                                fn    = await fn;
-                                console.log(fn);
-                          }
                           
                           var key           = modproxy.key(lname);
                           ext[name][key]    = fn;
@@ -474,6 +467,5 @@ function loader(attach,name='ext',override=true){
 
 
 })();
-
 
 
