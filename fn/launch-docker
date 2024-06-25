@@ -2,8 +2,10 @@
 
 (async ()=>{
   
-        //mod['nodejs-min'].start('ssh test',2222);
-
+        //docker['nodejs-min'].start('ssh test',2222);
+        //docker['ssh test'].stop();
+        //docker['ssh test'].remove();
+        
         var modproxy    = await ext.load.libs['core/proxy/modproxy.js'];
         var proxy       = modproxy(launch,{promiseCompat:true});
         return proxy;
@@ -15,22 +17,33 @@
                 var util    = require('node:util');
                 var exec    = util.promisify(cp.exec);
                 
+                var image;
+                var mode;
+                var name;
+                var ssh_port;
+                
                 var parts   = lname.split('.');
-                var image   = parts[0];
-                var mode    = parts[1]||'start';
-                var name    = args[0];
-                var port    = args[1];
-
-                if(mode=='remove')mode='rem';
-
-                if(mode=='start')start();
-                if(mode=='stop' || mode=='rem')stop();
+                mode        = parts.at(-1);
+                if(mode=='start'){
+                      image       = parts[0];
+                      name        = args[0];
+                      ssh_port    = args[1];
+                      start();
+                }
+                if(mode=='stop'){
+                      name    = parts[0];
+                      stop();
+                }
+                if(mode=='rem' || mode=='remove'){
+                      name    = parts[0];
+                      stop();
+                }
                 
                 
                 async function start(){
                 
                       var opts    = {};
-                      var cmd     = `docker run -di -p ${port}:2222 --name ${name} ${image}`;
+                      var cmd     = `docker run -di -p ${ssh_port}:2222 --name ${name} ${image}`;
                       
                       try{
                             var {stdout,stderr}   = await exec(cmd,opts);
