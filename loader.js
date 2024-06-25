@@ -87,12 +87,13 @@ function loader(attach,name='ext',override=true){
         ext.load          = {};
         ext.create        = {};
         create();
-        
-        ext.create.repo('code','javascript-2020','ext-code','main');
-        ext.create.repo('libs','javascript-2020','libs','main','js/');
         local();
         github();
-        
+
+  
+        ext.create.repo('code','javascript-2020','ext-code','main');
+        ext.create.repo('libs','javascript-2020','libs','main','js/');
+
         
         //snippets();
         
