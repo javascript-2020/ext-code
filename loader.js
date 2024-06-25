@@ -122,7 +122,7 @@ function loader(attach,name='ext',override=true){
                     
                     var load    = {};
                     
-                    load.get=async function(target,prop){
+                    load.get=async function(target,prop,text){
                                                                                 ext.df && console.log(`load.${name}`,prop);
                           var lname   = prop.split('/');
                           var key     = modproxy.key(lname);
@@ -130,19 +130,24 @@ function loader(attach,name='ext',override=true){
                           if(list[key]){
                                 return list[key];
                           }
-                          var fn        = await load.text(prop,lname);
+                          var fn        = await load.text(prop,lname,text);
                                                                                 ext.df && console.log(`load.${name}`,prop,typeof fn);
                           return fn;
                           
                     }//get
                     
-                    load.apply=function(target,thisArg,args){
+                    load.apply=function(target,thisArg,args,text){
                     
-                          return Promise.all(args.map(arg=>load.get(target,arg)));
+                          return Promise.all(args.map(arg=>load.get(target,arg,text)));
                           
                     }//apply
                     
                     ext.load[name]=new Proxy(()=>{},{get:load.get,apply:load.apply});
+                    
+                    ext.text[name]=new Proxy(()=>{},{
+                          get   : (target,prop)=>load.get(target,prop,'text'),
+                          apply : (target,thisArg,args)=>load.apply(target,thisArg,args,'text')
+                    });
                     
                     
                     ext[name] = modproxy(list,notfound);
@@ -160,7 +165,7 @@ function loader(attach,name='ext',override=true){
                     }//notfound
                     
                     
-                    load.text=async function(file,lname){
+                    load.text=async function(file,lname,text){
                                                                                 ext.df && console.log('load',lname);
                           if(def_dir){
                                 file    = def_dir+file;
@@ -177,13 +182,16 @@ function loader(attach,name='ext',override=true){
                                 return '[ not found '+file+' ]';
                           }
                           
-                          var fnstr       = await res.text();
-                          var fn          = define(fnstr);
+                          var value       = await res.text();
+                          
+                          if(!text){
+                                value     = define(fnstr);
+                          }
                           
                           var key           = modproxy.key(lname);
-                          ext[name][key]    = fn;
+                          ext[name][key]    = value;
                           
-                          return fn;
+                          return value;
                           
                     }//load
                     
