@@ -7,6 +7,8 @@ var url   = `https://api.github.com/repos/javascript-2020/ext-code/contents/load
     opts  = {headers:{accept:'application/vnd.github.raw+json'}};
 (await fetch(url,opts).then(res=>res.text()).then(eval))();
 
+
+
 (await fetch(`https://api.github.com/repos/javascript-2020/ext-code/contents/loader.js`,{headers:{accept:'application/vnd.github.raw+json'}}).then(res=>res.text()).then(eval))();
 
 
@@ -94,6 +96,7 @@ function loader(attach,name='ext',override=true){
         
         ext.create.repo('code','javascript-2020','ext-code','main');
         ext.create.repo('libs','javascript-2020','libs','main','js/');
+        ext.create.repo('nodejs','javascript-2020','code-projects','node-js/');
         
         
         //snippets();
