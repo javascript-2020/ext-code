@@ -131,9 +131,17 @@ function loader(attach,name='ext',override=true){
                           if(list[key]){
                                 return list[key];
                           }
-                          var fn        = await load.text(prop,lname,text);
-                                                                                ext.df && console.log(`load.${name}`,prop,typeof fn);
-                          return fn;
+                          var txt        = await load.text(prop,lname,text);
+                          
+                          var value;
+                          if(text){
+                                value   = txt;
+                          }else{
+                                value   = define(txt);
+                          }
+                                                                                ext.df && console.log(`load.${name}`,prop,typeof value);
+                          ext[name][key]    = value;
+                          return value;
                           
                     }//get
                     
@@ -155,11 +163,19 @@ function loader(attach,name='ext',override=true){
                     
                     async function notfound(lname,args){
                                                                                 ext.df && console.log('notfound',lname);
-                          var file    = lname.join('/');
-                          var fn      = await load.text(file,lname);
-                          if(typeof fn!='function'){
-                                return fn;
+                          var file          = lname.join('/');
+                          var txt           = await load.text(file,lname);
+                          
+                          var value         = define(fnstr);
+                          
+                          var key           = modproxy.key(lname);
+                          ext[name][key]    = value;
+                          
+                          if(typeof value!='function'){
+                                return value;
                           }
+                          
+                          var fn        = value;
                           var result    = await fn.apply(null,args);
                           return result;
                           
@@ -183,16 +199,8 @@ function loader(attach,name='ext',override=true){
                                 return '[ not found '+file+' ]';
                           }
                           
-                          var value       = await res.text();
-                          
-                          if(!text){
-                                value     = define(fnstr);
-                          }
-                          
-                          var key           = modproxy.key(lname);
-                          ext[name][key]    = value;
-                          
-                          return value;
+                          var txt       = await res.text();
+                          return txt;
                           
                     }//load
                     
@@ -213,23 +221,38 @@ function loader(attach,name='ext',override=true){
               var cur;
               var proxy   = {};
               
-              load.get=async function(target,prop){
+              load.get=async function(target,prop,text){
                                                                                   ext.df && console.log('load.proxy',prop);
-                    if(list[lname]){
-                          return list[lname];
+                    if(list[prop]){
+                          return list[prop];
                     }
-                    var fn        = await load(lname);
-                    return fn;
+                    
+                    var txt   = await load.text(prop,text);
+                    
+                    var value;
+                    if(text){
+                          value   = txt;
+                    }else{
+                          value   = define(txt);
+                    }
+                    
+                    list[prop]    = value;
+                    return value;
                     
               }//get
               
-              load.apply=function(target,thisArg,args){
+              load.apply=function(target,thisArg,args,text){
               
-                    return Promise.all(args.map(arg=>load.get(target,arg)));
+                    return Promise.all(args.map(arg=>load.get(target,arg,text)));
                     
               }//apply
               
               ext.load.github=new Proxy(()=>{},{get:load.get,apply:load.apply});
+              
+              ext.text.github=new Proxy(()=>{},{
+                    get   : (target,prop)=>load.get(target,prop,'text'),
+                    apply : (target,thisArg,args)=>load.apply(target,thisArg,args,'text')
+              });
               
               
               proxy.get=async function(target,prop){
@@ -238,21 +261,24 @@ function loader(attach,name='ext',override=true){
                     if(list[prop]){
                           return list[prop];
                     }
-                    var {owner,repo,branch,file}    = parse(prop);
-                    var fn    = await load.text(owner,repo,branch,file);
                     
-                    list[prop]    = fn;
+                    var txt       = await load.text(prop);
                     
-                    return fn;
+                    var value     = define(txt);
+                    list[prop]    = value;
+                    return value;
                     
               }//get2
               
               proxy.apply=async function(target,thisArg,args){
               
-                    var fn    = list[cur];
-                    if(typeof fn!='function'){
-                          return fn;
+                    var value   = list[cur];
+                    
+                    if(typeof value!='function'){
+                          return value;
                     }
+                    
+                    var fn        = value;
                     var result    = await fn.apply(thisArg,args);
                     return result;
                     
@@ -261,41 +287,24 @@ function loader(attach,name='ext',override=true){
               ext.github    = new Proxy({},{get:proxy.get,apply:proxy.apply});
               
               
-              async function notfound(lname,args){
+              load.text=async function(prop){
               
-                    var {owner,repo,branch,file}    = parse(lname);
+                    var {owner,repo,branch,file}    = parse(prop);
                     
-                    var fn        = await load.text(owner,repo,branch,file);
-                    if(typeof fn!='function'){
-                          return fn;
-                    }
-                    var result    = await fn.apply(null,args);
-                    return result;
-                    
-              }//notfound
-              
-              load.text=async function(owner,repo,branch,file){
-              
                     var url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
                     if(branch){
                           url  += `?ref=${branch}`;
                     }
                     var opts    = {headers:{accept:'application/vnd.github.raw+json'}};
-                    //var url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
                     var res     = await fetch(url,opts);
                     
                     if(!res.ok){
-                          console.log('failed to load remote-function: '+file);
+                                                                                console.log('failed to load remote-function: '+file);
                           return '[ not found '+file+' ]';
                     }
                     
-                    var fnstr       = await res.text();
-                    var fn          = define(fnstr);
-                    
-                    var lname             = `${owner}:${repo}:${branch}:${file}`;
-                    ext.github[lname]     = fn;
-                    
-                    return fn;
+                    var txt   = await res.text();
+                    return txt;
                     
               }//load
               
@@ -324,24 +333,38 @@ function loader(attach,name='ext',override=true){
               var proxy   = {};
               
               
-              load.get=function(target,prop){
+              load.get=function(target,prop,text){
                                                                                   ext.df && console.log('load.local',prop);
                     if(list[prop]){
                           return list[prop];
                     }
-                    var fn    = load.text(prop);
-                    return fn;
+                    
+                    var txt     = load.text(prop);
+                    
+                    var value;
+                    if(text){
+                          value   = txt;
+                    }else{
+                          value   = define(txt);
+                    }
+                    
+                    list[prop]    = value;
+                    return value;
                     
               }//get
               
-              load.apply=function(target,thisArg,args){
+              load.apply=function(target,thisArg,args,text){
               
-                    return args.map(arg=>load.get(target,arg));
+                    return args.map(arg=>load.get(target,arg,text));
                     
               }//apply
               
               ext.load.local    = new Proxy(()=>{},{get:load.get,apply:load.apply});
               
+              ext.text.local    = new Proxy(()=>{},{
+                    get     : (target,prop)=>load.get(target,prop,'text'),
+                    apply   : (target,thisArg,args)=>load.apply(target,thisArg,args,'text')
+              });
               
               
               proxy.get=function(target,prop){
@@ -350,18 +373,24 @@ function loader(attach,name='ext',override=true){
                     if(list[prop]){
                           return list[prop];
                     }
-                    var fn    = load.text(prop);
-                    return fn;
+                    
+                    var txt     = load.text(prop);
+                    
+                    var value   = define(txt);
+                    list[prop]  = value;
+                    return value;
                     
               }//get
               
               proxy.apply=function(target,thisArg,args){
               
-                    var fn    = list[cur];
+                    var value   = list[cur];
                     
-                    if(typeof fn!='function'){
-                          return fn;
+                    if(typeof value!='function'){
+                          return value;
                     }
+                    
+                    var fn        = value;
                     var result    = fn.apply(thisArg,args);
                     return result;
                     
@@ -372,12 +401,8 @@ function loader(attach,name='ext',override=true){
               
               load.text=function(file){
                                                                                 ext.df && console.log('local.load',file);
-                    var fnstr     = fs.readFileSync(file,'utf8');
-                    var fn        = define(fnstr);
-                    
-                    list[file]   = fn;
-                    
-                    return fn;
+                    var txt     = fs.readFileSync(file,'utf8');
+                    return txt;
                     
               }//load
               
@@ -402,7 +427,8 @@ function loader(attach,name='ext',override=true){
               
         }//define
         
-        
+  //:
+  
         function modproxy(mem,notfound,opts={}){
         
               modproxy.key    = lname=>lname.join(',');
