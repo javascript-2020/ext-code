@@ -96,7 +96,7 @@ function loader(attach,name='ext',override=true){
         
         ext.create.repo('code','javascript-2020','ext-code','main');
         ext.create.repo('libs','javascript-2020','libs','main','js/');
-        ext.create.repo('nodejs','javascript-2020','code-projects','node-js/');
+        ext.create.repo('nodejs','javascript-2020','code-projects','main','node-js/');
         
         
         //snippets();
