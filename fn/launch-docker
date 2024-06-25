@@ -2,11 +2,15 @@
 
 /*
 
-  docker['nodejs-min'].start('ssh-test',2222);
-  docker['ssh-test'].stop();
-  docker['ssh-test'].remove(true);
+        var docker    = await ext.load.code['fn/launch-docker'];
+
+        docker['nodejs-min'].start('ssh-test',2222);
+        docker['ssh-test'].stop();
+        docker['ssh-test'].remove(true);
+
 
 */
+
 
 
 //  var docker=
