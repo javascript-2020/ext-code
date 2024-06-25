@@ -17,7 +17,7 @@
                 
                 var parts   = lname.split('.');
                 var image   = parts[0];
-                var mode    = parts[1];
+                var mode    = parts[1]||'start';
                 var name    = args[0];
                 var port    = args[1];
                 
