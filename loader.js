@@ -1,11 +1,12 @@
 
 
 /*
-aab
 
 
-var url   = `https://api.github.com/repos/javascript-2020/ext-code/contents/loader.js`,opts={headers:{accept:'application/vnd.github.raw+json'}};
-fetch(url,opts).then(res=>res.text()).then(eval))();
+var url     = `https://api.github.com/repos/javascript-2020/ext-code/contents/loader.js`,
+    opts    = {headers:{accept:'application/vnd.github.raw+json'}};
+(await fetch(url,opts).then(res=>res.text()).then(eval))();
+
 
 (await fetch(`https://api.github.com/repos/javascript-2020/ext-code/contents/loader.js`,{headers:{accept:'application/vnd.github.raw+json'}}).then(res=>res.text()).then(eval))();
 
