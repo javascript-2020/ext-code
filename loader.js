@@ -85,6 +85,7 @@ function loader(attach,name='ext',override=true){
         
         
         ext.load          = {};
+        ext.text          = {};
         ext.create        = {};
         create();
         local();
