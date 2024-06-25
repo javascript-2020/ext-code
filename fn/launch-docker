@@ -1,10 +1,14 @@
 
 
+
+//var docker=
+
+
 (async ()=>{
 
-        //docker['nodejs-min'].start('ssh test',2222);
-        //docker['ssh test'].stop();
-        //docker['ssh test'].remove();
+        //docker['nodejs-min'].start('ssh-test',2222);
+        //docker['ssh-test'].stop();
+        //docker['ssh-test'].remove();
         
         var modproxy    = await ext.load.libs['core/proxy/modproxy.js'];
         var proxy       = modproxy(launch,{promiseCompat:true});
