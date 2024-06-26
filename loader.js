@@ -134,7 +134,7 @@ function loader(attach,name='ext',override=true){
                           if(list[key]){
                                 return list[key];
                           }
-                          var txt        = await load.text(prop,lname,text);
+                          var txt        = await load.text(prop,lname);
                           
                           var value;
                           if(text){
@@ -154,7 +154,10 @@ function loader(attach,name='ext',override=true){
                           
                     }//apply
                     
-                    ext.load[name]=new Proxy(()=>{},{get:load.get,apply:load.apply});
+                    ext.load[name]=new Proxy(()=>{},{
+                          get     : (target,prop)=>load.get(target,prop),
+                          apply   : (target,thisArg,args)=>load.apply(target,thisArg,args)
+                    });
                     
                     ext.text[name]=new Proxy(()=>{},{
                           get   : (target,prop)=>load.get(target,prop,'text'),
@@ -185,7 +188,7 @@ function loader(attach,name='ext',override=true){
                     }//notfound
                     
                     
-                    load.text=async function(file,lname,text){
+                    load.text=async function(file,lname){
                                                                                 ext.df && console.log('load',lname);
                           if(def_dir){
                                 file    = def_dir+file;
