@@ -53,39 +53,11 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
 
 (()=>{
 
-      return loader;
-      
-function loader(attach,name='ext',override=true){
-
   var ext                   = {};
   ext[Symbol.toStringTag]   = 'ext-code';
                                                                                 //console.clear();
                                                                                 console.log('ext-code.loader-v1.1');
                                                                                 //console.log();
-                                                                                
-        if(attach){
-              if(is(attach[name])){
-                    return attach[name];
-              }
-              if(!override){
-                    throw `unable to create attach.${name}`;
-              }
-              attach[name]    = ext;
-        }else{
-              if(attach!==null){
-                    if(globalThis[name]){
-                          if(is(globalThis[name])){
-                                return globalThis[name];
-                          }
-                          if(!override){
-                                throw `unable to create globalThis.${name}`;
-                          }
-                    }
-                    globalThis[name]    = ext;
-              }
-        }
-        
-        
         ext.load          = {};
         ext.text          = {};
         ext.create        = {};
@@ -504,9 +476,5 @@ function loader(attach,name='ext',override=true){
               
         }//modproxy
         
-}//loader
-
-
 })();
-
 
