@@ -67,7 +67,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         
         
         ext.create.repo('code','javascript-2020','ext-code','main');
-        ext.create.repo('libs','javascript-2020','libs','main','js/');
+        ext.create.repo('libs','javascript-2020','libs','main','');
         ext.create.repo('nodejs','javascript-2020','code-projects','main','node-js/');
         
         
@@ -477,4 +477,3 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         }//modproxy
         
 })();
-
