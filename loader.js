@@ -169,6 +169,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                           if(branch){
                                 url  += `?ref=${branch}`;
                           }
+                          var url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
                           var opts    = {headers:{accept:'application/vnd.github.raw+json'}};
                           var res     = await fetch(url,opts);
                           
