@@ -399,8 +399,9 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                           
                     })();
               `;
-              
-              var fn    = eval(code);
+
+              var indirect  = eval;
+              var fn    = indirect(code);
                                                                                   ext.df && console.log('define',fn);
               return fn;
               
