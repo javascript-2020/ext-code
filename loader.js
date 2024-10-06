@@ -442,7 +442,8 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     var key   = modproxy.key(lname);
                                                                                   //console.log(`wt : ${key} - ${newval}`);
                     mem[key]    = newval;
-                    
+                    return true;
+                  
               }//setter
               
               
