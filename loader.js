@@ -120,7 +120,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                           
                     }//get
                     
-                    load.apply=function(target,thisArg,args,text){
+                    load.apply=async function(target,thisArg,args,text){
                     
                           return await Promise.all(args.map(arg=>load.get(target,arg,text)));
                           
