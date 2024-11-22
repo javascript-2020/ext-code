@@ -107,7 +107,8 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                                 return list[key];
                           }
                           var txt        = await load.text(prop,lname);
-                          
+                        
+                          if(ext.df)debugger;
                           var value;
                           if(text){
                                 value   = txt;
