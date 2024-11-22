@@ -122,7 +122,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     
                     load.apply=function(target,thisArg,args,text){
                     
-                          return Promise.all(args.map(arg=>load.get(target,arg,text)));
+                          return await Promise.all(args.map(arg=>load.get(target,arg,text)));
                           
                     }//apply
                     
