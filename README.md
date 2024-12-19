@@ -9,7 +9,29 @@ dont ask me what it is yet, i havent decided
 
 ```
 
+v1.0
+====
+
 var ext    =  await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval));
+
+
+v2.0
+====
+
+var ext;
+var $,datatype;
+
+fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js')
+  .then(res=>res.text().then(async txt=>{
+  
+      ext   = eval(txt);
+      [$,datatype]    = await ext.load.libs('js/dom/$','js/core/datatype');
+      
+      initdom();
+      
+  }));
+
+
 
 ```
 
