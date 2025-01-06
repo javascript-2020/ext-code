@@ -166,14 +166,27 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                           if(def_dir){
                                 file    = def_dir+file;
                           }
-                          var url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
-                          if(branch){
-                                url  += `?ref=${branch}`;
-                          }
-                          var url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
-                          var opts    = {headers:{accept:'application/vnd.github.raw+json'}};
-                          var res     = await fetch(url,opts);
                           
+                          var mode    = 'raw';
+                          if(file.endsWith('.api')){
+                                file    = file.slice(0,-4);
+                                mode    = 'api';
+                          }
+                          
+                          var url;
+                          var opts;
+                          if(mode=='raw'){
+                                url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
+                          }
+                          if(mode=='api'){
+                                url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
+                                if(branch){
+                                      url  += `?ref=${branch}`;
+                                }
+                                opts    = {headers:{accept:'application/vnd.github.raw+json'}};
+                          }
+                          
+                          var res     = await fetch(url,opts);
                           if(!res.ok){
                                                                                 console.log('failed to load remote-function: '+file);
                                 return '[ not found '+file+' ]';
