@@ -184,6 +184,14 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                                       url  += `?ref=${branch}`;
                                 }
                                 opts    = {headers:{accept:'application/vnd.github.raw+json'}};
+                              
+                                if(typeof localStorage!='undefined'){
+                                      var token    = localStorage['github-token'];
+                                      if(token){
+                                            opts.headers.authorization    = `bearer ${token}`;
+                                      }
+                                }
+                              
                           }
                           
                           var res     = await fetch(url,opts);
