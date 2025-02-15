@@ -145,7 +145,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                           var file          = lname.join('/');
                           var txt           = await load.text(file,lname);
                           
-                          var value         = define(fnstr);
+                          var value         = define(txt);
                           
                           var key           = modproxy.key(lname);
                           ext[name][key]    = value;
