@@ -12,9 +12,12 @@ dont ask me what it is yet, i havent decided
 v1.0
 ====
 
-var ext    =  await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js')
+var ext    =  await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js')
                       .then(res=>res.text().then(eval));
+or
 
+var ext    =  await fetch('https://api.github.com/repos/javascript-2020/ext-code/contents/ext-loader.js')
+                .then(res=>res.json().then(json=>eval(atob(json.contents))));
 
 v2.0
 ====
@@ -22,7 +25,7 @@ v2.0
 var ext;
 var $,datatype;
 
-fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js')
+fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js')
   .then(res=>res.text().then(async txt=>{
   
       ext   = eval(txt);
@@ -149,17 +152,17 @@ var result        =    ext.local['/work/tmp/test.js'](1,2,3);
 ### other ways to run
 
 ```
-    - (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))();
+    - (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js').then(res=>res.text().then(eval)))();
     
-    - (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(window,'ext');
+    - (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js').then(res=>res.text().then(eval)))(window,'ext');
     
-    - var ext   = (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(null);
+    - var ext   = (await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js').then(res=>res.text().then(eval)))(null);
     
     - ( (typeof ext=='undefined') &&
-        (ext=(await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval)))(null))
+        (ext=(await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js').then(res=>res.text().then(eval)))(null))
       );
       
-    - var loader    = await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js').then(res=>res.text().then(eval));
+    - var loader    = await fetch('https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js').then(res=>res.text().then(eval));
         - loader();
         - loader(window);
         - loader(window,'test');
@@ -168,7 +171,7 @@ var result        =    ext.local['/work/tmp/test.js'](1,2,3);
 //  node.js
 
         var ext   = (await new Promise(resolve=>{
-              var loader    = 'https://raw.githubusercontent.com/javascript-2020/ext-code/main/loader.js',body='';
+              var loader    = 'https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js',body='';
               require('https').get(loader,async res=>{for await(data of res)body+=data;resolve(eval(body))}).end();
         }))();
 
