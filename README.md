@@ -17,7 +17,14 @@ var ext    =  await fetch('https://raw.githubusercontent.com/javascript-2020/ext
 or
 
 var ext    =  await fetch('https://api.github.com/repos/javascript-2020/ext-code/contents/ext-loader.js')
-                .then(res=>res.json().then(json=>eval(atob(json.contents))));
+                .then(res=>res.json().then(json=>eval(atob(json.content))));
+
+or
+
+var opts   =  localStorage['github-token'] && {header:{authorization:`bearer ${localStorage['github-token']}`}};
+var ext    =  await fetch('https://api.github.com/repos/javascript-2020/ext-code/contents/ext-loader.js',opts)
+                .then(res=>res.json().then(json=>eval(atob(json.content))));
+
 
 v2.0
 ====
