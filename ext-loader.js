@@ -553,7 +553,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         
         async function load_libs(){
         
-              var promise   = ext.libs.load('js/core/dbmod/single-value-dbmod.js');
+              var promise   = ext.load.libs('js/core/dbmod/single-value-dbmod.js');
               [dbmod]       = await promise;
               
         }//load_libs
