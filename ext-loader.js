@@ -58,9 +58,12 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                                                                                 //console.clear();
                                                                                 console.log('ext-code.loader-v1.1');
                                                                                 //console.log();
+        
         ext.load          = {};
         ext.text          = {};
         ext.create        = {};
+        ext.import        = importfn;
+        
         create();
         local();
         github();
@@ -72,8 +75,12 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         
         
         //snippets();
+
         
+        var dbmod
+        ;
         
+        load_libs         = load_libs();
         
         
         return ext;
@@ -93,12 +100,12 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         
               ext.create.repo=function(name,owner,repo,branch,def_dir){
                                                                                 ext.df && console.log('create',type);
-                    var list      = {};
+                    var list    = {};
                     
                     
                     var load    = {};
                     
-                    load.get=async function(target,prop,text){
+                    load.get    = async function(target,prop,text){
                                                                                 ext.df && console.log(`load.${name}`,prop);
                           var lname   = prop.split('/');
                           var key     = modproxy.key(lname);
@@ -106,9 +113,8 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                           if(list[key]){
                                 return list[key];
                           }
-                          var txt        = await load.text(prop,lname);
-                        
-                          if(ext.df)debugger;
+                          var txt   = await load.text(prop,lname);
+                                                                                if(ext.df)debugger;
                           var value;
                           if(text){
                                 value   = txt;
@@ -121,24 +127,25 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                           
                     }//get
                     
-                    load.apply=function(target,thisArg,args,text){
+                    load.apply    = function(target,thisArg,args,text){
                     
                           return Promise.all(args.map(arg=>load.get(target,arg,text)));
                           
                     }//apply
                     
-                    ext.load[name]=new Proxy(()=>{},{
+                    ext.load[name]    = new Proxy(()=>{},{
                           get     : (target,prop)=>load.get(target,prop),
                           apply   : (target,thisArg,args)=>load.apply(target,thisArg,args)
                     });
                     
-                    ext.text[name]=new Proxy(()=>{},{
+                    ext.text[name]    = new Proxy(()=>{},{
                           get   : (target,prop)=>load.get(target,prop,'text'),
                           apply : (target,thisArg,args)=>load.apply(target,thisArg,args,'text')
                     });
                     
                     
-                    ext[name] = modproxy(list,notfound);
+                    ext[name]   = modproxy(list,notfound);
+
                     
                     async function notfound(lname,args){
                                                                                 ext.df && console.log('notfound',lname);
@@ -161,7 +168,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     }//notfound
                     
                     
-                    load.text=async function(file,lname){
+                    load.text   = async function(file,lname){
                                                                                 ext.df && console.log('load',lname);
                           if(def_dir){
                                 file    = def_dir+file;
@@ -499,5 +506,66 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               }//newproxy
               
         }//modproxy
+
+
+  //:
+  
+  
+        async function importfn(){
+        
+              var args    = [...arguments];
+              var n       = args.length;
+              var mods    = new Array(n);
+              await Promise.all(args.map(async(url,i)=>{
+              
+                    var type;
+                    if(typeof url!='string'){
+                          var o   = url;
+                          type    = o.type;
+                          url     = o.url;
+                    }
+                    if(url in urls){
+                          url   = urls[url];
+                    }
+                    
+                    var mod;
+                    
+                    mod   = await import(url);
+                    
+                    if(type=='default'){
+                          mod   = mod.default;
+                    }
+                    mods[i]   = mod;
+                    
+              }));
+              
+              return mods;
+              
+        }//importfn
+        
+        
+        
+        var urls      = {};
+        urls.rsa      = 'https://cdn.jsdelivr.net/npm/jsrsasign/+esm';
+        urls.forge    = 'https://cdn.jsdelivr.net/npm/node-forge/+esm';
+
+
+        
+        async function load_libs(){
+        
+              var promise   = ext.libs.load('js/core/dbmod/single-value-dbmod.js');
+              [dbmod]       = await promise;
+              
+        }//load_libs
+        
         
 })();
+
+
+
+
+
+
+
+
+
