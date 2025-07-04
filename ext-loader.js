@@ -59,7 +59,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               url       = 'https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js';
         }
         
-        fetch(url).then(res=>res.text().then(libs);
+        fetch(url).then(res=>res.text().then(ext));
 
             
         async function ext(txt){
