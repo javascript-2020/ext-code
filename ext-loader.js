@@ -48,7 +48,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
   ======
 
 
-            <script ext>
+            <scr  ipt ext>
 
         init.stack.add;
         
@@ -81,7 +81,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
 
         }//ext
 
-            </scri pt ext>
+            </scri  pt ext>
   
 
 */
