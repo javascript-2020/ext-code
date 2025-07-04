@@ -553,7 +553,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         
         function load_libs(){
 
-              var promise   = new Promise();
+              var resolve,promise   = new Promise(res=>resolve=res);
               
               setTimeout(fn,100);
 
