@@ -46,6 +46,8 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
 
             <scr  ipt ext>
 
+(async()=>{
+  
         init.stack.add;
         
         var token   = localStorage['github-token'];
@@ -58,10 +60,11 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               url       = 'https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js';
         }
         
-        fetch(url,headers).then(res=>res.text().then(ext));
+        //fetch(url,headers).then(res=>res.text()).then(ext);
+        await fetch(url,{headers}).then(res=>res.text()).then(complete);
 
             
-        async function ext(txt){
+        async function complete(txt){
 
               ext           = eval(txt);
               var promise   = ext.load.libs(
@@ -75,8 +78,9 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
 
               init.stack.complete;
 
-        }//ext
+        }//ext_fn
 
+})();
             </scr  ipt ext>
 
 
