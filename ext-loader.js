@@ -44,46 +44,6 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
 
 
 
-  script
-  ======
-
-
-            <scr  ipt ext>
-
-        init.stack.add;
-        
-        var token   = localStorage['github-token'];
-        var url;
-        var headers;
-        if(token){
-              url       = 'https://api.github.com/repos/javascript-2020/ext-code/contents/ext-loader.js';
-              headers   = {accept:'application/vnd.github.raw+json',authorization:`bearer ${token}`};
-        }else{
-              url       = 'https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js';
-        }
-        
-        fetch(url,headers).then(res=>res.text().then(ext));
-
-            
-        async function ext(txt){
-
-              ext           = eval(txt);
-              var promise   = ext.load.libs(
-                    'js/dom/$.js.api',
-                    'js/core/datatype.js',
-                    'js/dom/menumod/menumod.js',
-                    'js/dom/keydown/keydown.js',
-                    'js/crypto/encrypt/encrypt.js.api'
-              );
-              [$,datatype,menumod,keydown,encrypt]   = await promise;
-
-              init.stack.complete;
-
-        }//ext
-
-            </scri  pt ext>
-  
-
 */
 
 
@@ -591,7 +551,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
 
 
         
-        async function load_libs(){
+        function load_libs(){
 
               var promise   = new Promise();
               
@@ -600,7 +560,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               return promise;
               
               
-              function fn(){
+              async function fn(){
               
                     var promise   = ext.load.libs('js/core/dbmod/single-value-dbmod.js');
                     [dbmod]       = await promise;
