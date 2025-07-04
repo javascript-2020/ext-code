@@ -564,7 +564,6 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               
                     var promise   = ext.load.libs('js/core/dbmod/single-value-dbmod.js');
                     [dbmod]       = await promise;
-                    console.log('***',dbmod,'***');
                     
               }//fn
               
