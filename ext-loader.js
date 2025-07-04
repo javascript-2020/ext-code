@@ -53,7 +53,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         var headers;
         if(token){
               url       = 'https://api.github.com/repos/javascript-2020/ext-code/contents/ext-loader.js';
-              headers   = {accept:'application/vnd.github.raw+json',authorization:`bearer ${token}`};
+              headers   = {accept:'application/vnd.github.raw',authorization:`bearer ${token}`};
         }else{
               url       = 'https://raw.githubusercontent.com/javascript-2020/ext-code/main/ext-loader.js';
         }
