@@ -140,7 +140,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         
         function create(){
         
-              ext.create.repo=function(name,owner,repo,branch,def_dir){
+              ext.create.repo   = function(name,owner,repo,branch,def_dir){
                                                                                 ext.df && console.log('create',type);
                     var list    = {};
                     
@@ -270,8 +270,9 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               var load    = {};
               var cur;
               var proxy   = {};
+
               
-              load.get=async function(target,prop,text){
+              load.get    = async function(target,prop,text){
                                                                                   ext.df && console.log('load.proxy',prop);
                     if(list[prop]){
                           return list[prop];
@@ -290,22 +291,25 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     return value;
                     
               }//get
+
               
-              load.apply=function(target,thisArg,args,text){
+              load.apply    = function(target,thisArg,args,text){
               
                     return Promise.all(args.map(arg=>load.get(target,arg,text)));
                     
               }//apply
+
               
-              ext.load.github=new Proxy(()=>{},{get:load.get,apply:load.apply});
+              ext.load.github   = new Proxy(()=>{},{get:load.get,apply:load.apply});
+
               
-              ext.text.github=new Proxy(()=>{},{
+              ext.text.github   = new Proxy(()=>{},{
                     get   : (target,prop)=>load.get(target,prop,'text'),
                     apply : (target,thisArg,args)=>load.apply(target,thisArg,args,'text')
               });
               
               
-              proxy.get=async function(target,prop){
+              proxy.get   = async function(target,prop){
               
                     cur   = prop;
                     if(list[prop]){
@@ -319,8 +323,9 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     return value;
                     
               }//get2
+
               
-              proxy.apply=async function(target,thisArg,args){
+              proxy.apply   = async function(target,thisArg,args){
               
                     var value   = list[cur];
                     
@@ -333,11 +338,12 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     return result;
                     
               }//apply2
+
               
               ext.github    = new Proxy({},{get:proxy.get,apply:proxy.apply});
               
               
-              load.text=async function(prop){
+              load.text   = async function(prop){
               
                     var {owner,repo,branch,file}    = parse(prop);
                     
@@ -357,6 +363,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     return txt;
                     
               }//load
+
               
               function parse(prop){
               
@@ -383,7 +390,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               var proxy   = {};
               
               
-              load.get=function(target,prop,text){
+              load.get    = function(target,prop,text){
                                                                                   ext.df && console.log('load.local',prop);
                     if(list[prop]){
                           return list[prop];
@@ -402,14 +409,17 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     return value;
                     
               }//get
+
               
-              load.apply=function(target,thisArg,args,text){
+              load.apply    = function(target,thisArg,args,text){
               
                     return args.map(arg=>load.get(target,arg,text));
                     
               }//apply
+
               
               ext.load.local    = new Proxy(()=>{},{get:load.get,apply:load.apply});
+
               
               ext.text.local    = new Proxy(()=>{},{
                     get     : (target,prop)=>load.get(target,prop,'text'),
@@ -417,7 +427,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               });
               
               
-              proxy.get=function(target,prop){
+              proxy.get   = function(target,prop){
               
                     cur   = prop;
                     if(list[prop]){
@@ -431,8 +441,9 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     return value;
                     
               }//get
+
               
-              proxy.apply=function(target,thisArg,args){
+              proxy.apply   = function(target,thisArg,args){
               
                     var value   = list[cur];
                     
@@ -445,11 +456,12 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     return result;
                     
               }//apply
+
               
               ext.local    = new Proxy({},{get:proxy.get,apply:proxy.apply});
               
               
-              load.text=function(file){
+              load.text   = function(file){
                                                                                 ext.df && console.log('local.load',file);
                     var txt     = fs.readFileSync(file,'utf8');
                     return txt;
@@ -457,8 +469,10 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               }//load
               
         }//local
+
         
   //:
+
   
         function define(fnstr){
                                                                                   ext.df && console.log('define',fnstr);
@@ -476,8 +490,10 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               return fn;
               
         }//define
+
         
   //:
+
   
         function modproxy(mem,notfound,opts={}){
         
@@ -611,6 +627,11 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               
         }//load_libs
         
+
+
+
+
+
         
 })();
 
