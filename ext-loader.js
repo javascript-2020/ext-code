@@ -125,7 +125,6 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         load_libs         = load_libs();
         
         
-        return ext;
         
         
         function is(v){
@@ -221,7 +220,20 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                                 file    = file.slice(0,-4);
                                 mode    = 'api';
                           }
-                          
+
+
+                          var {txt,error}   = await loader({mode,token,owner,repo,branch,file});
+                          if(error){
+                                                                                console.log('failed to load remote-function: '+file);
+                                                                                console.log(error);
+                                return '[ not found '+file+' ]';
+                          }
+
+                          return txt;
+
+
+
+/*                            
                           var url;
                           var opts;
                           if(mode=='raw'){
@@ -251,6 +263,8 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                           
                           var txt       = await res.text();
                           return txt;
+*/
+
                           
                     }//load
                     
@@ -341,17 +355,61 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
 
               
               ext.github    = new Proxy({},{get:proxy.get,apply:proxy.apply});
+
+
               
+
               
               load.text   = async function(prop){
               
                     var {owner,repo,branch,file}    = parse(prop);
+
                     
-                    var url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
-                    if(branch){
-                          url  += `?ref=${branch}`;
+                    var token;
+                    var mode    = 'raw';
+                    if(typeof localStorage!='undefined'){
+                          mode    = 'api';
+                          token   = localStorage['github-token'];
                     }
-                    var opts    = {headers:{accept:'application/vnd.github.raw+json'}};
+                    
+                    var {txt,error}   = await loader({mode,token,owner,repo,branch,file});
+                    if(error){                                                                                
+                                                                                console.log('failed to load remote-function: '+file);
+                                                                                console.log(error);
+                          return '[ not found '+file+' ]';
+                    }
+
+                    return txt;
+
+
+
+
+/*
+                    var url;
+                    var opts;
+                    
+                    if(mode=='raw'){
+                          url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
+                    }
+                    if(mode=='api'){
+                          url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
+                          if(branch){
+                                url  += `?ref=${branch}`;
+                          }
+                          opts    = {headers:{accept:'application/vnd.github.raw'}};
+                        
+                          if(typeof localStorage!='undefined'){
+                                var token    = localStorage['github-token'];
+                                if(token){
+                                      opts.headers.authorization    = `bearer ${token}`;
+                                }
+                          }
+                        
+                    }
+
+                    var {txt,error}   = await local[mode]({token,owner,repo,branch,file});
+
+                    
                     var res     = await fetch(url,opts);
                     
                     if(!res.ok){
@@ -360,8 +418,15 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     }
                     
                     var txt   = await res.text();
-                    return txt;
+                    if(res.headers.get('content-type').includes('json')){
+                          var json    = JSON.parse(txt);
+                          var b64     = json.content;
+                          txt         = atob(b64);
+                    }
                     
+                    return txt;
+*/
+
               }//load
 
               
@@ -473,6 +538,89 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         
   //:
 
+
+        async function loader({mode,token,owner,repo,branch,file}){
+          
+              var {txt,error}   = await loader[mode]({token,owner,repo,branch,file});
+              if(error && mode=='api'){
+                    ({txt,error}   = await loader.raw({token,owner,repo,branch,file}));
+              }
+              return {txt,error};
+              
+        }//loader
+        
+
+        loader.fetch    = async function(url,opts){
+          
+              var err;
+              try{
+                
+                    var res   = await fetch(url);
+                    
+              }//try
+              catch(err2){
+                
+                    err   = err2;
+                    
+              }//catch
+              if(err){
+                    var error   = err.toString();
+                    return {error};
+              }
+              
+              if(!res.ok){
+                    var error   = await res.text();
+                    return {error};
+              }
+              
+              var txt   = await res.text();
+              
+              if(res.headers.get('content-type').includes('json')){
+                    var json    = JSON.parse(txt);
+                    var b64     = json.content;
+                    txt         = atob(b64);
+              }
+              
+              return {txt};
+              
+        }//fetch
+        
+        
+        loader.raw    = async function({owner,repo,branch,file}){
+          
+              var url           = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
+              var {txt,error}   = await load.fetch(url);
+              return {txt,error};
+              
+        }//raw
+
+        
+        loader.api    = async function({token,owner,repo,branch,file}){
+          
+              var url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
+              if(branch){
+                    url  += `?ref=${branch}`;
+              }
+              
+              var opts    = {headers:{accept:'application/vnd.github.raw'}};
+            
+              if(!token){
+                    if(typeof localStorage!='undefined'){
+                          token    = localStorage['github-token'];
+                    }
+              }
+              if(token){
+                    opts.headers.authorization    = `bearer ${token}`;
+              }
+          
+              var {txt,error}   = await load.fetch(url,opts);
+              return {txt,error};
+              
+        }//api
+  
+  
+  //:
+  
   
         function define(fnstr){
                                                                                   ext.df && console.log('define',fnstr);
@@ -626,10 +774,18 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               }//fn
               
         }//load_libs
+
+
+
+
         
 
+  //:
+  
+  
+  
 
-
+  return ext;
 
 
         
