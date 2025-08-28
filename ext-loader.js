@@ -220,7 +220,14 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                                 file    = file.slice(0,-4);
                                 mode    = 'api';
                           }
-
+                          
+                          var token;
+                          if(typeof localStorage!='undefined'){
+                                token   = localStorage['github-token'];
+                          }
+                          if(token){
+                                mode    = 'api';
+                          }
 
                           var {txt,error}   = await loader({mode,token,owner,repo,branch,file});
                           if(error){
@@ -231,41 +238,6 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
 
                           return txt;
 
-
-
-/*                            
-                          var url;
-                          var opts;
-                          if(mode=='raw'){
-                                url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
-                          }
-                          if(mode=='api'){
-                                url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
-                                if(branch){
-                                      url  += `?ref=${branch}`;
-                                }
-                                opts    = {headers:{accept:'application/vnd.github.raw+json'}};
-                              
-                                if(typeof localStorage!='undefined'){
-                                      var token    = localStorage['github-token'];
-                                      if(token){
-                                            opts.headers.authorization    = `bearer ${token}`;
-                                      }
-                                }
-                              
-                          }
-                          
-                          var res     = await fetch(url,opts);
-                          if(!res.ok){
-                                                                                console.log('failed to load remote-function: '+file);
-                                return '[ not found '+file+' ]';
-                          }
-                          
-                          var txt       = await res.text();
-                          return txt;
-*/
-
-                          
                     }//load
                     
               }//create.repo
@@ -368,10 +340,12 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     var token;
                     var mode    = 'raw';
                     if(typeof localStorage!='undefined'){
-                          mode    = 'api';
                           token   = localStorage['github-token'];
                     }
-                    
+                    if(token){
+                          mode    = 'api';
+                    }
+                      
                     var {txt,error}   = await loader({mode,token,owner,repo,branch,file});
                     if(error){                                                                                
                                                                                 console.log('failed to load remote-function: '+file);
@@ -380,52 +354,6 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     }
 
                     return txt;
-
-
-
-
-/*
-                    var url;
-                    var opts;
-                    
-                    if(mode=='raw'){
-                          url     = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
-                    }
-                    if(mode=='api'){
-                          url     = `https://api.github.com/repos/${owner}/${repo}/contents/${file}`;
-                          if(branch){
-                                url  += `?ref=${branch}`;
-                          }
-                          opts    = {headers:{accept:'application/vnd.github.raw'}};
-                        
-                          if(typeof localStorage!='undefined'){
-                                var token    = localStorage['github-token'];
-                                if(token){
-                                      opts.headers.authorization    = `bearer ${token}`;
-                                }
-                          }
-                        
-                    }
-
-                    var {txt,error}   = await local[mode]({token,owner,repo,branch,file});
-
-                    
-                    var res     = await fetch(url,opts);
-                    
-                    if(!res.ok){
-                                                                                console.log('failed to load remote-function: '+file);
-                          return '[ not found '+file+' ]';
-                    }
-                    
-                    var txt   = await res.text();
-                    if(res.headers.get('content-type').includes('json')){
-                          var json    = JSON.parse(txt);
-                          var b64     = json.content;
-                          txt         = atob(b64);
-                    }
-                    
-                    return txt;
-*/
 
               }//load
 
@@ -541,6 +469,12 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
 
         async function loader({mode,token,owner,repo,branch,file}){
           
+              if(!token){
+                    if(typeof localStorage!='undefined'){
+                          token   = localStorage['github-token'];
+                    }
+              }
+              
               var {txt,error}   = await loader[mode]({token,owner,repo,branch,file});
               if(error && mode=='api'){
                     ({txt,error}   = await loader.raw({token,owner,repo,branch,file}));
