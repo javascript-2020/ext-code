@@ -555,7 +555,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               var err;
               try{
                 
-                    var res   = await fetch(url);
+                    var res   = await fetch(url,opts);
                     
               }//try
               catch(err2){
