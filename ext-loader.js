@@ -589,7 +589,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
         loader.raw    = async function({owner,repo,branch,file}){
           
               var url           = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file}`;
-              var {txt,error}   = await load.fetch(url);
+              var {txt,error}   = await loader.fetch(url);
               return {txt,error};
               
         }//raw
@@ -613,7 +613,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     opts.headers.authorization    = `bearer ${token}`;
               }
           
-              var {txt,error}   = await load.fetch(url,opts);
+              var {txt,error}   = await loader.fetch(url,opts);
               return {txt,error};
               
         }//api
