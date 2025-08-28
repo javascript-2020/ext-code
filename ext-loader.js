@@ -510,9 +510,19 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
               var txt   = await res.text();
               
               if(res.headers.get('content-type').includes('json')){
-                    var json    = JSON.parse(txt);
-                    var b64     = json.content;
-                    txt         = atob(b64);
+                    var err;
+                    try{
+                      
+                          var json    = JSON.parse(txt);
+                          var b64     = json.content;
+                          var txt2    = atob(b64);
+                          txt         = txt2;
+                          
+                    }//try
+                    catch(err2){
+                      
+                          err   = err2;
+                    }
               }
               
               return {txt};
