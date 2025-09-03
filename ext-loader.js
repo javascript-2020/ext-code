@@ -158,7 +158,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                                 
                                 switch(fn){
                                   
-                                  case '$'          : fn2   = 'js/dom/$.js.api');           break;
+                                  case '$'          : fn2   = 'js/dom/$.js.api';            break;
                                   case 'datatype'   : fn2   = 'js/core/datatype.js';        break;
                                   case 'debug'      : fn2   = 'js/debug/debug.js';          break;
                                   
