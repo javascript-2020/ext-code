@@ -144,10 +144,42 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     var list    = {};
                     
                     
+                    function simple(args){
+                      
+                          if(name!=='libs'){
+                                return args;
+                          }
+                          
+                          var n   = args.length;
+                          for(var i=0;i<n;i++){
+                            
+                                var fn    = args[i];
+                                var fn2;
+                                
+                                switch(fn){
+                                  
+                                  case '$'          : fn2   = 'js/dom/$.js.api');           break;
+                                  case 'datatype'   : fn2   = 'js/core/datatype.js';        break;
+                                  case 'debug'      : fn2   = 'js/debug/debug.js';          break;
+                                  
+                                }//switch
+                                
+                                if(fn2){
+                                      args.splice(i,1,fn2);
+                                }
+                                
+                          }//for
+                          
+                          return args;
+                          
+                    }//simple
+                    
+                    
                     var load    = {};
                     
                     load.get    = async function(target,prop,text){
                                                                                 ext.df && console.log(`load.${name}`,prop);
+                          
                           var lname   = prop.split('/');
                           var key     = modproxy.key(lname);
                           
@@ -170,6 +202,7 @@ eval(require('fs').readFileSync(require('base').root+'projects/ext-code/loader.j
                     
                     load.apply    = function(target,thisArg,args,text){
                     
+                          args    = simple(args);
                           return Promise.all(args.map(arg=>load.get(target,arg,text)));
                           
                     }//apply
